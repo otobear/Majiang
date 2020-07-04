@@ -1,0 +1,28 @@
+mixin fenpei(lunban)
+  div(class=lunban)
+    span.feng
+    | :
+    span.player
+    span.defen
+    span.diff
+
+.huledialog
+  div
+    div
+      .hule
+        .shoupai
+          .shouli
+          .fulou
+
+        table.fanzhong
+          tr.r_fanzhong
+            td.name_zh
+            td.fenshu
+          tr.r_zongfen
+            td.zongfen(colspan="2")
+
+      .fenpei
+        +fenpei('xiajia')
+        +fenpei('duimian')
+        +fenpei('shangjia')
+        +fenpei('main')
