@@ -10,8 +10,9 @@
     "build:css": "stylus src/css/index.styl -o www/css/majiang.css",
     "build": "npm run build:html && npm run build:css && npm run build:js",
     "release": "npm run build:html && npm run build:css && webpack --mode production",
-    "test": "mocha -u tdd",
-    "test:cover": "istanbul cover -x \"**/dev/**\" node_modules/mocha/bin/_mocha -- -u tdd --no-timeouts"
+    "heroku-postbuild": "npm run release",
+    "start": "node src/js/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,10 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "jquery": "^3.4.1",
-    "jquery-ui": "^1.12.1"
+    "jquery-ui": "^1.12.1",
+    "express": "^4.15.2"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
