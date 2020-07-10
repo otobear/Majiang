@@ -3,6 +3,7 @@ module.exports = {
     majiang: [ 'babel-polyfill', './src/js/entry.js' ],
     game: './src/js/game.js',
     paipu: './src/js/paipu.js',
+    paipu_edit: './src/js/paipu_edit.js',
   },
   output: {
     path: __dirname + '/www/js/',
