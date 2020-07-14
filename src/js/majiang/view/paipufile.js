@@ -7,18 +7,16 @@ const Paipu = require('./paipu');
 
 // 检查必须项目，除去无关项目
 function fix_paipu(paipu) {
-  const format = {};
-  // 一局牌可以没有 defen, point, rank
-  for (let key of ['title', 'player', 'qijia', 'log']) {
-    format[key] = true;
-  }
+  const keys = ['title', 'player', 'qijia', 'log', 'defen', 'point', 'rank'];
+  // 局单位牌谱可以没有 defen, point, rank
+  const must_keys = { 'title': true, 'player': true, 'qijia': true, 'log': true };
 
   for (let p of [].concat(paipu)) {
-    for (let key in format) {
+    for (let key in must_keys) {
       if (p[key] == undefined) throw new Error(`${key}: ${p[key]}`);
     }
     for (let key in p) {
-      if (!format[key]) delete p[key];
+      if (!keys.includes(key)) delete p[key];
     }
   }
   return paipu;

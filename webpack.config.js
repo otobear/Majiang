@@ -4,6 +4,7 @@ module.exports = {
     game: './src/js/game.js',
     paipu: './src/js/paipu.js',
     paipu_edit: './src/js/paipu_edit.js',
+    paipu_edit_single: './src/js/paipu_edit_single.js',
   },
   output: {
     path: __dirname + '/www/js/',

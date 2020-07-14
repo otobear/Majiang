@@ -1,0 +1,173 @@
+doctype html
+html(lang="ja")
+
+  head
+    include ../html-include/meta.pug
+
+    title 一人で中国麻雀: 牌譜ビューア
+
+    include ../html-include/style.pug
+
+    script(src="js/majiang.js" defer)
+    script(src="js/paipu_edit.js" defer)
+
+  body.file
+    .paipuInfo
+      input(type="text" name="title" placeholder="タイトル")
+      button#preview
+        | 全体プレビュー
+      br
+      input(type="text" name="player0" placeholder="対局者A")
+      input(type="text" name="defen0" placeholder="最終得点A")
+      input(type="text" name="point0" placeholder="順位点A")
+      input(type="text" name="rank0" placeholder="順位A")
+      br
+      input(type="text" name="player1" placeholder="対局者B")
+      input(type="text" name="defen1" placeholder="最終得点B")
+      input(type="text" name="point1" placeholder="順位点B")
+      input(type="text" name="rank1" placeholder="順位B")
+      br
+      input(type="text" name="player2" placeholder="対局者C")
+      input(type="text" name="defen2" placeholder="最終得点C")
+      input(type="text" name="point2" placeholder="順位点C")
+      input(type="text" name="rank2" placeholder="順位C")
+      br
+      input(type="text" name="player3" placeholder="対局者D")
+      input(type="text" name="defen3" placeholder="最終得点D")
+      input(type="text" name="point3" placeholder="順位点D")
+      input(type="text" name="rank3" placeholder="順位D")
+      br
+      button#saveInfo
+        | 対局情報を確定
+    table.paipuLog
+      tr.paipuLog__ju(data-ju="0")
+        td
+          a(href="paipu_edit_single.html?quanfeng=0&jushu=0&zuoci=0&zuoci=1&zuoci=2&zuoci=3" target="_blank" class="paipuSingle" data-log="[]") 東一局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="1")
+        td
+          a(href="paipu_edit_single.html?quanfeng=0&jushu=1&zuoci=1&zuoci=2&zuoci=3&zuoci=0" target="_blank" class="paipuSingle" data-log="[]") 東二局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="2")
+        td
+          a(href="paipu_edit_single.html?quanfeng=0&jushu=2&zuoci=2&zuoci=3&zuoci=0&zuoci=1" target="_blank" class="paipuSingle" data-log="[]") 東三局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="3")
+        td
+          a(href="paipu_edit_single.html?quanfeng=0&jushu=3&zuoci=3&zuoci=0&zuoci=1&zuoci=2" target="_blank" class="paipuSingle" data-log="[]") 東四局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="4")
+        td
+          a(href="paipu_edit_single.html?quanfeng=1&jushu=0&zuoci=1&zuoci=0&zuoci=3&zuoci=2" target="_blank" class="paipuSingle" data-log="[]") 南一局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="5")
+        td
+          a(href="paipu_edit_single.html?quanfeng=1&jushu=1&zuoci=0&zuoci=3&zuoci=2&zuoci=1" target="_blank" class="paipuSingle" data-log="[]") 南二局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="6")
+        td
+          a(href="paipu_edit_single.html?quanfeng=1&jushu=2&zuoci=3&zuoci=2&zuoci=1&zuoci=0" target="_blank" class="paipuSingle" data-log="[]") 南三局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="7")
+        td
+          a(href="paipu_edit_single.html?quanfeng=1&jushu=3&zuoci=2&zuoci=1&zuoci=0&zuoci=3" target="_blank" class="paipuSingle" data-log="[]") 南四局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="8")
+        td
+          a(href="paipu_edit_single.html?quanfeng=2&jushu=0&zuoci=2&zuoci=3&zuoci=1&zuoci=0" target="_blank" class="paipuSingle" data-log="[]") 西一局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="9")
+        td
+          a(href="paipu_edit_single.html?quanfeng=2&jushu=1&zuoci=3&zuoci=1&zuoci=0&zuoci=2" target="_blank" class="paipuSingle" data-log="[]") 西二局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="10")
+        td
+          a(href="paipu_edit_single.html?quanfeng=2&jushu=2&zuoci=1&zuoci=0&zuoci=2&zuoci=3" target="_blank" class="paipuSingle" data-log="[]") 西三局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="11")
+        td
+          a(href="paipu_edit_single.html?quanfeng=2&jushu=3&zuoci=0&zuoci=2&zuoci=3&zuoci=1" target="_blank" class="paipuSingle" data-log="[]") 西四局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="12")
+        td
+          a(href="paipu_edit_single.html?quanfeng=3&jushu=0&zuoci=3&zuoci=2&zuoci=0&zuoci=1" target="_blank" class="paipuSingle" data-log="[]") 北一局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="13")
+        td
+          a(href="paipu_edit_single.html?quanfeng=3&jushu=1&zuoci=2&zuoci=0&zuoci=1&zuoci=3" target="_blank" class="paipuSingle" data-log="[]") 北二局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="14")
+        td
+          a(href="paipu_edit_single.html?quanfeng=3&jushu=2&zuoci=0&zuoci=1&zuoci=3&zuoci=2" target="_blank" class="paipuSingle" data-log="[]") 北三局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+      tr.paipuLog__ju(data-ju="15")
+        td
+          a(href="paipu_edit_single.html?quanfeng=3&jushu=3&zuoci=1&zuoci=3&zuoci=2&zuoci=0" target="_blank" class="paipuSingle" data-log="[]") 北四局
+        td
+          a(href="#" target="_blank" class="paipuSinglePreview") プレビュー
+        td
+          button.loadButtonSingle
+            | ロード
+
+
+    .version

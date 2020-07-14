@@ -10,17 +10,16 @@
 import { parse } from 'querystring';
 
 $(function() {
-  let params = parse(location.search);
+  let params = parse(decodeURI(location.search.replace(/^\?/,'')));
   $('.version').text('ver. ' + Majiang.VERSION);
   if (params.hasOwnProperty('paipu')) {
     new Majiang.View.PaipuFile($('#file .file')).load_paipu(params['paipu']);
   } else if (location.hash) {
-    let paipuFile = new Majiang.View.PaipuFile($('#file .file'), 'Majiang.paipu');
+    let paipuFile = new Majiang.View.PaipuFile($('#file .file'));
     paipuFile._paipu.add(JSON.parse(decodeURI(location.hash.replace(/^#/,''))));
     paipuFile.open_player(paipuFile._paipu.length() - 1);
     paipuFile._paipu.del(paipuFile.length - 1);
-  }
-  else {
+  } else {
     new Majiang.View.PaipuFile($('#file .file'), 'Majiang.paipu');
   }
 });
