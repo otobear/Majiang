@@ -12,42 +12,35 @@ $(function() {
   // let paipu_info =
   let params = parseParams(location.search);
 
-  // 去除开始和最后的方括号
   let player = localStorage.getItem('Majiang.paipu_info.player');
-  player = s_to_a_s(player);
+  player = JSON.parse(player);
   for (let k in [...Array(4)]) {
-    $('.section').eq(k).find('.info .player').text(player[k]);
+    $('.section').eq(params['zuoci'][k]).find('.info .player').text(player[k]);
   }
 
   $('#preview').on('click', (e) => {
-    let defen = [];
-    let fenpei = [];
-    for (let k in [...Array(4)]) {
-      defen.push($('.section').eq(k).find('input[name="defen"]').val());
-      fenpei.push($('.section').eq(k).find('input[name="fenpei"]').val());
-    }
+    let game_info = get_game_info();
+    let _defen = JSON.parse(game_info['defen'])[params['jushu']];
+    let _fenpei = JSON.parse(game_info['fenpei'])[params['jushu']];
     let paipu = generate_single_paipu(params['quanfeng'],
                                       params['jushu'],
-                                      a_i_to_s(params['zuoci']),
-                                      a_i_to_s(defen),
-                                      a_i_to_s(fenpei));
+                                      JSON.stringify(params['zuoci']),
+                                      JSON.stringify(_defen),
+                                      JSON.stringify(_fenpei));
                                       // TODO
                                       // ,fanzhong
     window.open(`paipu.html#${paipu}`, '_blank');
   });
 
   $('#save').on('click', (e) => {
-    let defen = [];
-    let fenpei = [];
-    for (let k in [...Array(4)]) {
-      defen.push(parseInt($('.section').eq(k).find('input[name="defen"]').val()));
-      fenpei.push(parseInt($('.section').eq(k).find('input[name="fenpei"]').val()));
-    }
+    let game_info = get_game_info();
+    let _defen = JSON.parse(game_info['defen'])[params['jushu']];
+    let _fenpei = JSON.parse(game_info['fenpei'])[params['jushu']];
     let log = generate_paipu_log(params['quanfeng'],
                                  params['jushu'],
-                                 a_i_to_s(params['zuoci']),
-                                 a_i_to_s(defen),
-                                 a_i_to_s(fenpei));
+                                 JSON.stringify(params['zuoci']),
+                                 JSON.stringify(_defen),
+                                 JSON.stringify(_fenpei));
     localStorage.setItem('Majiang.paipu_log', log);
   });
 
@@ -206,9 +199,9 @@ $(function() {
     // if (_params.hasOwnProperty('title')) title = _params['title'];
     // if (_params.hasOwnProperty('player')) player = _params['player'];
     // if (_params.hasOwnProperty('qijia')) qijia = _params['qijia'];
-    if (_params.hasOwnProperty('quanfeng')) quanfeng = _params['quanfeng'];
-    if (_params.hasOwnProperty('jushu')) jushu = _params['jushu'];
-    if (_params.hasOwnProperty('zuoci')) zuoci = _params['zuoci'];
+    if (_params.hasOwnProperty('quanfeng')) quanfeng = parseInt(_params['quanfeng']);
+    if (_params.hasOwnProperty('jushu')) jushu = parseInt(_params['jushu']);
+    if (_params.hasOwnProperty('zuoci')) zuoci = _params['zuoci'].map(x => parseInt(x));
     // if (_params.hasOwnProperty('defen')) defen = _params['defen'];
     return { quanfeng: quanfeng, jushu: jushu, zuoci: zuoci }
   }
@@ -481,22 +474,6 @@ $(function() {
     return shoupai.toString();
   };
 
-  function a_i_to_s(a) {
-    return '[' + a.join(',') + ']';
-  }
-
-  function a_s_to_s(a) {
-    return '["' + a.join('","') + '"]';
-  }
-
-  function s_to_a_i(s) {
-    return s.substring(1, s.length - 1).split(',');
-  }
-
-  function s_to_a_s(s) {
-    return s.substring(1, s.length - 1).split(',').map(x => x.substring(1, x.length - 1));
-  }
-
   function get_game_info() {
     let title = localStorage.getItem('Majiang.paipu_info.title')
                 ? localStorage.getItem('Majiang.paipu_info.title')
@@ -507,8 +484,8 @@ $(function() {
     let qijia = localStorage.getItem('Majiang.paipu_info.qijia')
                 ? localStorage.getItem('Majiang.paipu_info.qijia')
                 : '';
-    let defen = localStorage.getItem('Majiang.paipu_info.defen')
-                ? localStorage.getItem('Majiang.paipu_info.defen')
+    let zongdefen = localStorage.getItem('Majiang.paipu_info.zongdefen')
+                ? localStorage.getItem('Majiang.paipu_info.zongdefen')
                 : '';
     let point = localStorage.getItem('Majiang.paipu_info.point')
                 ? localStorage.getItem('Majiang.paipu_info.point')
@@ -516,7 +493,14 @@ $(function() {
     let rank = localStorage.getItem('Majiang.paipu_info.rank')
                 ? localStorage.getItem('Majiang.paipu_info.rank')
                 : '';
+    let defen = localStorage.getItem('Majiang.paipu_info.defen')
+                ? localStorage.getItem('Majiang.paipu_info.defen')
+                : '';
+    let fenpei = localStorage.getItem('Majiang.paipu_info.fenpei')
+                ? localStorage.getItem('Majiang.paipu_info.fenpei')
+                : '';
     return { title: title, player: player, qijia: qijia,
-             defen: defen, point: point, rank: rank };
+             zongdefen: zongdefen, point: point, rank: rank,
+             defen: defen, fenpei: fenpei };
   }
 });

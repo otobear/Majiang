@@ -12,31 +12,339 @@ html(lang="ja")
     script(src="js/paipu_edit.js" defer)
 
   body.file
-    .paipuInfo
-      input(type="text" name="title" placeholder="タイトル")
-      button#preview
-        | 全体プレビュー
-      br
-      input(type="text" name="player0" placeholder="対局者A")
-      input(type="text" name="defen0" placeholder="最終得点A")
-      input(type="text" name="point0" placeholder="順位点A")
-      input(type="text" name="rank0" placeholder="順位A")
-      br
-      input(type="text" name="player1" placeholder="対局者B")
-      input(type="text" name="defen1" placeholder="最終得点B")
-      input(type="text" name="point1" placeholder="順位点B")
-      input(type="text" name="rank1" placeholder="順位B")
-      br
-      input(type="text" name="player2" placeholder="対局者C")
-      input(type="text" name="defen2" placeholder="最終得点C")
-      input(type="text" name="point2" placeholder="順位点C")
-      input(type="text" name="rank2" placeholder="順位C")
-      br
-      input(type="text" name="player3" placeholder="対局者D")
-      input(type="text" name="defen3" placeholder="最終得点D")
-      input(type="text" name="point3" placeholder="順位点D")
-      input(type="text" name="rank3" placeholder="順位D")
-      br
+    input(type="text" name="title" placeholder="タイトル")
+    button#preview
+      | 全体プレビュー
+    table.paipuInfo
+      tbody
+        tr
+          td プレイヤー名
+          td(colspan="2")
+            input(type="text" name="player0" placeholder="対局者A")
+          td(colspan="2")
+            input(type="text" name="player1" placeholder="対局者B")
+          td(colspan="2")
+            input(type="text" name="player2" placeholder="対局者C")
+          td(colspan="2")
+            input(type="text" name="player3" placeholder="対局者D")
+        tr(data-ju="0")
+          td 東一局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="1")
+          td 東二局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="2")
+          td 東三局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="3")
+          td 東四局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="4")
+          td 南一局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="5")
+          td 南二局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="6")
+          td 南三局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="7")
+          td 南四局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="8")
+          td 西一局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="9")
+          td 西二局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="10")
+          td 西三局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="11")
+          td 西四局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="12")
+          td 北一局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="13")
+          td 北二局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="14")
+          td 北三局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr(data-ju="15")
+          td 北四局
+          td
+            input(type="text" name="fenpei0" placeholder="得点")
+          td
+            input(type="text" name="defen0" placeholder="合計")
+          td
+            input(type="text" name="fenpei1" placeholder="得点")
+          td
+            input(type="text" name="defen1" placeholder="合計")
+          td
+            input(type="text" name="fenpei2" placeholder="得点")
+          td
+            input(type="text" name="defen2" placeholder="合計")
+          td
+            input(type="text" name="fenpei3" placeholder="得点")
+          td
+            input(type="text" name="defen3" placeholder="合計")
+        tr
+          td 素点
+          td(colspan="2")
+            input(type="text" name="zongdefen0" placeholder="素点")
+          td(colspan="2")
+            input(type="text" name="zongdefen1" placeholder="素点")
+          td(colspan="2")
+            input(type="text" name="zongdefen2" placeholder="素点")
+          td(colspan="2")
+            input(type="text" name="zongdefen3" placeholder="素点")
+        tr
+          td ポイント
+          td(colspan="2")
+            input(type="text" name="point0" placeholder="ポイント")
+          td(colspan="2")
+            input(type="text" name="point1" placeholder="ポイント")
+          td(colspan="2")
+            input(type="text" name="point2" placeholder="ポイント")
+          td(colspan="2")
+            input(type="text" name="point3" placeholder="ポイント")
+        tr
+          td 順位
+          td(colspan="2")
+            input(type="text" name="rank0" placeholder="順位")
+          td(colspan="2")
+            input(type="text" name="rank1" placeholder="順位")
+          td(colspan="2")
+            input(type="text" name="rank2" placeholder="順位")
+          td(colspan="2")
+            input(type="text" name="rank3" placeholder="順位")
       button#saveInfo
         | 対局情報を確定
     table.paipuLog
