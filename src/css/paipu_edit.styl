@@ -9,8 +9,103 @@
 
 .previewButton,
 .saveButton,
-.loadButton {
+.loadButton,
+.fanzhongButton {
   float: right;
+}
+
+.modalBackground {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow-y: scroll;
+
+  .escape {
+    float: right;
+    font-size: 32px;
+    line-height: 1;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.fanzhongPanel {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #fff;
+  width: 1000px;
+}
+
+.fanzhongList {
+  width: 700px;
+}
+
+.fanzhongList__items {
+  display: flex;
+  margin: 10px 0;
+  list-style-type: none;
+}
+
+.fanzhongList__item + .fanzhongList__item {
+  margin-left: 10px;
+}
+
+.fanzhongList__item {
+  a {
+    text-decoration: none;
+  }
+}
+
+.fanzhongDisplay {
+  width: 180px;
+}
+
+.fanzhongDisplay__row + .fanzhongDisplay__row {
+  margin-top: 10px;
+}
+
+.fanzhongDisplay__name {
+  margin-right: 20px;
+}
+
+.fanzhongDisplay__fenshu,
+.fanzhongDisplay__unit {
+  float: right;
+}
+
+.fanzhongDisplay__zongfen {
+  float: right;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px solid;
+}
+
+.minus.icon {
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  border-radius: 50%;
+  background-clip: padding-box;
+  background-color: #343a40;
+  font-weight: bold;
 }
 
 .paiTable {

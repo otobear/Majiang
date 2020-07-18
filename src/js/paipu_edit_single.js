@@ -9,24 +9,29 @@
 import { parse } from 'querystring';
 
 $(function() {
-  // let paipu_info =
   let params = parseParams(location.search);
 
   let player = localStorage.getItem('Majiang.paipu_info.player');
   player = JSON.parse(player);
   for (let k in [...Array(4)]) {
-    $('.section').eq(params['zuoci'][k]).find('.info .player').text(player[k]);
+    $('.section').eq(k).find('.info .player').text(player[params['zuoci'][k]]);
   }
 
   $('#preview').on('click', (e) => {
     let game_info = get_game_info();
     let _defen = JSON.parse(game_info['defen'])[params['jushu']];
     let _fenpei = JSON.parse(game_info['fenpei'])[params['jushu']];
+    let defen = [];
+    let fenpei = [];
+    for (let k in [...Array(4)]) {
+      defen.push(_defen[params['zuoci'][k]]);
+      fenpei.push(_fenpei[params['zuoci'][k]]);
+    }
     let paipu = generate_single_paipu(params['quanfeng'],
                                       params['jushu'],
                                       JSON.stringify(params['zuoci']),
-                                      JSON.stringify(_defen),
-                                      JSON.stringify(_fenpei));
+                                      JSON.stringify(defen),
+                                      JSON.stringify(fenpei));
                                       // TODO
                                       // ,fanzhong
     window.open(`paipu.html#${paipu}`, '_blank');
@@ -36,17 +41,54 @@ $(function() {
     let game_info = get_game_info();
     let _defen = JSON.parse(game_info['defen'])[params['jushu']];
     let _fenpei = JSON.parse(game_info['fenpei'])[params['jushu']];
+    let defen = [];
+    let fenpei = [];
+    for (let k in [...Array(4)]) {
+      defen.push(_defen[params['zuoci'][k]]);
+      fenpei.push(_fenpei[params['zuoci'][k]]);
+    }
     let log = generate_paipu_log(params['quanfeng'],
                                  params['jushu'],
                                  JSON.stringify(params['zuoci']),
-                                 JSON.stringify(_defen),
-                                 JSON.stringify(_fenpei));
+                                 JSON.stringify(defen),
+                                 JSON.stringify(fenpei));
     localStorage.setItem('Majiang.paipu_log', log);
   });
 
   $('#load').on('click', (e) => {
     let log = localStorage.getItem('Majiang.paipu_log');
     // TODO:
+  });
+
+  $('#setFanzhong').on('click', (e) => {
+    e.preventDefault();
+    $('.modalBackground').fadeIn();
+  });
+
+  $('.escape', '.modalBackground').on('click', (e) => {
+    e.preventDefault();
+    $('.modalBackground').fadeOut();
+  });
+
+  let zongfen = 0;
+  $('li a', '.fanzhongList__row').on('click', (e) => {
+    let fanzhong = e.target.getAttribute('data-fanzhong_zh');
+    let fenshu = parseInt(e.target.parentElement.parentElement.getAttribute('data-fenshu'));
+    $('.fanzhongDisplay__rows').append(`<div class="fanzhongDisplay__row" data-fenshu="${fenshu}"><span class="minus icon">-</span> <span class="fanzhongDisplay__name">${fanzhong}</span> <span class="fanzhongDisplay__unit">点</span><span class="fanzhongDisplay__fenshu">${fenshu}</span></div>`);
+    zongfen += fenshu;
+    document.getElementsByClassName('fanzhongDisplay__zongfen')[0].textContent = `${zongfen}点`;
+
+    $('.minus.icon').on('click', (e) => {
+      e.target.parentElement.remove();
+      let _fenshu = Array.from(document.getElementsByClassName('fanzhongDisplay__row')).map(x => parseInt(x.getAttribute('data-fenshu')));
+      if (_fenshu.length) {
+        zongfen = _fenshu.reduce((l, r) => l + r);
+        document.getElementsByClassName('fanzhongDisplay__zongfen')[0].textContent = `${zongfen}点`;
+      } else {
+        zongfen = 0;
+        document.getElementsByClassName('fanzhongDisplay__zongfen')[0].textContent = '';
+      }
+    });
   });
 
   let click_pos = 1000;
@@ -392,6 +434,19 @@ $(function() {
     let shoupai = `["${shoupai_0}","${shoupai_1}","${shoupai_2}","${shoupai_3}"]`;
     log += `{"qipai":{"quanfeng":${quanfeng},"jushu":${jushu},"zuoci":${zuoci},"defen":${defen},"shoupai":${shoupai}}}`;
 
+    let zongfen = 0;
+    let _fanzhong = [];
+    $('.fanzhongDisplay__row').each(function(i, e) {
+      let name = e.getElementsByClassName('fanzhongDisplay__name')[0].textContent;
+      let fenshu = parseInt(e.getElementsByClassName('fanzhongDisplay__fenshu')[0].textContent);
+      zongfen += fenshu;
+      _fanzhong.push({ 'name_zh': name, 'fenshu': fenshu });
+    });
+    let fanzhong = JSON.stringify({ 'fanzhong': _fanzhong });
+    fanzhong = fanzhong.substring(1, fanzhong.length - 1);
+
+    let chongjia = null;
+
     let jieju = false;
     let _mopai_pos = 100;
     let _dapai_pos = 200;
@@ -406,6 +461,7 @@ $(function() {
         let dapai = $(`.clickPai[data-pos="x${dapai_pos}"]`).attr('data-p');
         let mopai_say = $(`.clickSay[data-pos="x${mopai_pos}"]`).attr('data-s');
         let mopai_say_l = $(`.clickSay[data-pos="x${mopai_pos}"]`).attr('data-l');
+        let dapai_say = $(`.clickSay[data-pos="x${dapai_pos}"]`).attr('data-s');
         let l = j - 1;
         let m;
         switch (mopai_say) {
@@ -437,11 +493,13 @@ $(function() {
           // 和
           case 'h':
             let hupaixing = generate_qipai(`x${j}3`) + mopai;
-            log += `,{"hule":{"chongjia":0,"l":${l},"shoupai":"${hupaixing}","zongfen":0,"fanzhong":[],"fenpei":${fenpei}}}`;
+            log += `,{"hule":{"chongjia":${chongjia},"l":${l},"shoupai":"${hupaixing}","zongfen":${zongfen},${fanzhong},"fenpei":${fenpei}}}`;
             jieju = true;
             break;
           default:
             log += `,{"zimo":{"l":${l},"p":"${mopai}"}}`;
+            // 放铳
+            if (dapai_say == 'f') chongjia = l;
         }
         if (dapai == 'b0') continue;
         log += `,{"dapai":{"l":${l},"p":"${dapai}"}}`;

@@ -15,7 +15,6 @@ $(function() {
     player.push($('input[name="player1"]').val());
     player.push($('input[name="player2"]').val());
     player.push($('input[name="player3"]').val());
-    // player = '["' + player.join('","') + '"]';
     player = JSON.stringify(player);
     localStorage.setItem('Majiang.paipu_info.player', player);
     let qijia = 0;
