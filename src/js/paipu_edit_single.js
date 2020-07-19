@@ -19,8 +19,8 @@ $(function() {
 
   $('#preview').on('click', (e) => {
     let game_info = get_game_info();
-    let _defen = JSON.parse(game_info['defen'])[params['jushu']];
-    let _fenpei = JSON.parse(game_info['fenpei'])[params['jushu']];
+    let _defen = JSON.parse(game_info['defen'])[params['quanfeng'] * 4 + params['jushu']];
+    let _fenpei = JSON.parse(game_info['fenpei'])[params['quanfeng'] * 4 + params['jushu']];
     let defen = [];
     let fenpei = [];
     for (let k in [...Array(4)]) {
@@ -39,8 +39,8 @@ $(function() {
 
   $('#save').on('click', (e) => {
     let game_info = get_game_info();
-    let _defen = JSON.parse(game_info['defen'])[params['jushu']];
-    let _fenpei = JSON.parse(game_info['fenpei'])[params['jushu']];
+    let _defen = JSON.parse(game_info['defen'])[params['quanfeng'] * 4 + params['jushu']];
+    let _fenpei = JSON.parse(game_info['fenpei'])[params['quanfeng'] * 4 + params['jushu']];
     let defen = [];
     let fenpei = [];
     for (let k in [...Array(4)]) {
@@ -261,7 +261,7 @@ $(function() {
 
   function set_pai_moqie(pos, p) {
     let clickPai = $(`.clickPai[data-pos="x${pos}"]`);
-    clickPai.attr('data-p', p);
+    clickPai.attr('data-p', p + '_');
     clickPai.attr('src', `img/transparent/k0.png`);
     clickPai.removeClass('clickPai--blank');
   }
@@ -474,13 +474,13 @@ $(function() {
             let p3 = parseInt(n) + 2;
             switch (mopai_say_m) {
               case '0':
-                m = mopai + '-' + p2 + p3;
+                m = t + n + '-' + String(p2) + String(p3);
                 break;
               case '1':
-                m = p1 + mopai + '-' + p2;
+                m = t + String(p1) + n + '-' + String(p2);
                 break;
               case '2':
-                m = p0 + p1 + mopai + '-';
+                m = t + String(p0) + String(p1) + n + '-';
                 break;
             }
             log += `,{"fulou":{"l":${l},"m":"${m}"}}`;
@@ -492,6 +492,10 @@ $(function() {
             break;
           // 和
           case 'h':
+            // 自摸
+            if (chongjia == null) {
+              log += `,{"zimo":{"l":${l},"p":"${mopai}"}}`;
+            }
             let hupaixing = generate_qipai(`x${j}3`) + mopai;
             log += `,{"hule":{"chongjia":${chongjia},"l":${l},"shoupai":"${hupaixing}","zongfen":${zongfen},${fanzhong},"fenpei":${fenpei}}}`;
             jieju = true;
