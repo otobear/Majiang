@@ -130,7 +130,7 @@ gang(gang) {
     if (this._callback) this._callback();
   } else {
     if (!gang.m.match(/^[mpsz]\d{4}/)) {
-      if (this._callback) this.action_gang(gang); // 小明杠
+      if (this._callback) this.action_gang(gang); // 加杠
     } else {
       if (this._callback) this._callback();
     }

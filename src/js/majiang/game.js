@@ -291,7 +291,7 @@ gang(gang) {
 
   let p = (gang.match(/^[mpsz]\d{4}$/))
         ? gang.substr(0, 2) // 暗杠
-        : gang[0] + gang.substr(-1) // 小明杠
+        : gang[0] + gang.substr(-1) // 加杠
   model.shoupai[model.lunban].gang(p);
 
   let paipu = { gang: { l: model.lunban, m: gang } };
@@ -641,7 +641,7 @@ reply_fulou() {
   this.delay(() => this.dapai(p), 0);
 }
 
-// 收到杠（暗杠、小明杠）回复后的动作。包括摸牌、和了（仅限小明杠）
+// 收到杠（暗杠、加杠）回复后的动作。包括摸牌、和了（仅限加杠）
 reply_gang() {
   let model = this._model;
 
@@ -651,7 +651,7 @@ reply_gang() {
     return;
   }
 
-  // 小明杠可以被抢杠
+  // 加杠可以被抢杠
   for (let i = 1; i < 4; i++) {
     let l = (model.lunban + i) % 4;
     let reply = this._reply[model.player_id[l]];
@@ -663,7 +663,7 @@ reply_gang() {
     }
   }
 
-  // 小明杠摸牌
+  // 加杠摸牌
   this.delay(() => this.gangzimo(), 0);
 }
 
@@ -791,7 +791,7 @@ static get_peng_mianzi(shoupai, p) {
 
 /**
  * @param {string} shoupai 手牌
- * @param {string} p 打牌（null 为暗杠和小明杠）
+ * @param {string} p 打牌（null 为暗杠和加杠）
  *
  * @return {array} 杠牌面子候选（海底牌可以杠）
 
@@ -804,7 +804,7 @@ static get_gang_mianzi(shoupai, p) {
     if (shoupai._zimo) return [];
     return shoupai.get_gang_mianzi(p);
   } else {
-    // 暗杠和小明杠
+    // 暗杠和加杠
     if (!shoupai._zimo) return [];
     if (shoupai._zimo.length > 2) return [];
 

@@ -12,7 +12,7 @@ const view_class = ['main', 'xiajia', 'duimian', 'shangjia'];
 const feng_hanzi = ['東', '南', '西', '北'];
 const shu_hanzi = ['一', '二', '三', '四'];
 
-const say_text = { chi: 'チー', peng: 'ポン', gang: 'カン', hu: 'フー' };
+const say_text = { chi: '吃', peng: '碰', gang: '杠', hu: '和' };
 
 class Chang {
   constructor(root, model) {

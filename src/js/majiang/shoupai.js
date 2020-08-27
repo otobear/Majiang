@@ -198,7 +198,7 @@ fulou(m) {
   return this;
 }
 
-// 杠（手牌减 1(小明杠) 或 3(暗杠) 并清除 _zimo）
+// 杠（手牌减 1(加杠) 或 3(暗杠) 并清除 _zimo）
 gang(p) {
   if (!Shoupai.valid_pai(p)) throw new Error(p);
   if (!this._zimo || this._zimo.length != 2) throw new Error([this, p]);
@@ -211,7 +211,7 @@ gang(p) {
     shouli[n] -= 4;
     this._fulou.push(m);
   } else {
-    // 小明杠
+    // 加杠
     if (shouli[n] == 0) throw new Error([this, p]);
 
     const regexp = new RegExp(`^${s}${n}{3}`);
@@ -311,7 +311,7 @@ get_peng_mianzi(p) {
 }
 
 /**
- * @param {string} p 他家舍牌。null 为暗杠或小明杠
+ * @param {string} p 他家舍牌。null 为暗杠或加杠
  *
  * @return {array} 杠牌面子候选
  *
@@ -349,7 +349,7 @@ get_gang_mianzi(p) {
           mianzi.push(s + n + n +n + n)
         }
         else {
-          // 小明杠
+          // 加杠
           for (let m of this._fulou) {
             if (m.substr(0, 4) == s + n + n + n) {
               mianzi.push(m + n);
