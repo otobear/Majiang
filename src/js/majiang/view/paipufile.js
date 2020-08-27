@@ -5,18 +5,18 @@ require('jquery-ui/ui/widgets/sortable');
 
 const Paipu = require('./paipu');
 
+// 检查必须项目，除去无关项目
 function fix_paipu(paipu) {
-  const format = {};
-  for (let key of ['title', 'player', 'qijia', 'log', 'defen', 'rank', 'point']) {
-    format[key] = true;
-  }
+  const keys = ['title', 'player', 'qijia', 'log', 'defen', 'point', 'rank'];
+  // 局单位牌谱可以没有 defen, point, rank
+  const must_keys = { 'title': true, 'player': true, 'qijia': true, 'log': true };
 
   for (let p of [].concat(paipu)) {
-    for (let key in format) {
+    for (let key in must_keys) {
       if (p[key] == undefined) throw new Error(`${key}: ${p[key]}`);
     }
     for (let key in p) {
-      if (!format[key]) delete p[key];
+      if (!keys.includes(key)) delete p[key];
     }
   }
   return paipu;
@@ -24,6 +24,7 @@ function fix_paipu(paipu) {
 
 class PaipuStorage {
   constructor(storage) {
+    // storage 内可能有多个牌谱
     this._paipu = [];
     try {
       if (storage && localStorage) {
@@ -100,7 +101,7 @@ constructor(node, storage) {
         continue;
       }
       let reader = new FileReader();
-      reader.onload = function(event){
+      reader.onload = function(event) {
         let paipu;
         try {
           paipu = JSON.parse(event.target.result);
@@ -131,7 +132,7 @@ constructor(node, storage) {
   this.redraw();
 }
 
-load_paipu(url, hash) {
+load_paipu(url) {
   const success = data => {
     try {
       this._paipu.add(data);
@@ -140,18 +141,6 @@ load_paipu(url, hash) {
     }
     catch(e) {
       this.error(`不正なファイル: ${decodeURI(url)}`);
-    }
-    if (hash) {
-      let [fragment, opt] = hash.split(':');
-
-      this.open_player(...fragment.split('/').map(x => (x=='')?0:+x));
-
-      if (opt.match(/s/)) this._viewer.shoupai();
-      if (opt.match(/h/)) this._viewer.he();
-      for (let x of opt.match(/\+/g)||[]) {
-        if (this._viewer._deny_repeat) break;
-        this._viewer.next();
-      }
     }
   }
   const error = e => {

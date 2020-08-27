@@ -7,13 +7,19 @@
 
 "use strict";
 
-$(function(){
+import { parse } from 'querystring';
+
+$(function() {
+  let params = parse(decodeURI(location.search.replace(/^\?/,'')));
   $('.version').text('ver. ' + Majiang.VERSION);
-  if (location.search) {
-    new Majiang.View.PaipuFile($('#file .file'))
-      .load_paipu(location.search.replace(/^\?/,''), location.hash.replace(/^#/,''));
-  }
-  else {
+  if (params.hasOwnProperty('paipu')) {
+    new Majiang.View.PaipuFile($('#file .file')).load_paipu(params['paipu']);
+  } else if (location.hash) {
+    let paipuFile = new Majiang.View.PaipuFile($('#file .file'));
+    paipuFile._paipu.add(JSON.parse(decodeURI(location.hash.replace(/^#/,''))));
+    paipuFile.open_player(paipuFile._paipu.length() - 1);
+    paipuFile._paipu.del(paipuFile.length - 1);
+  } else {
     new Majiang.View.PaipuFile($('#file .file'), 'Majiang.paipu');
   }
 });

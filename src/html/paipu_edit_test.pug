@@ -1,0 +1,180 @@
+mixin pai_img(x)
+  img&attributes(attributes)
+
+doctype html
+html(lang="ja")
+
+  head
+    include ../html-include/meta.pug
+
+    title 一人で中国麻雀: 牌譜ビューア
+
+    include ../html-include/style.pug
+
+    script(src="js/majiang.js" defer)
+    script(src="js/paipu_edit_test.js" defer)
+
+  body.file
+    #main
+      button.fanzhongButton#setFanzhong
+        | 役
+      include ../html-include/fanzhong_panel.pug
+      .caption.f100
+        button.toggle -
+        | 対戦情報
+        .section
+          .forescapeios6inputbug.f100
+            input#paipuTitle.w100.f100.clickready
+            br
+            table
+              tbody
+                tr
+                  td 局数
+                  td
+                    select.clickready.w100#kyoku
+                      option 東1局
+                      option 東2局
+                      option 東3局
+                      option 東4局
+                      option 南1局
+                      option 南2局
+                      option 南3局
+                      option 南4局
+                      option 西1局
+                      option 西2局
+                      option 西3局
+                      option 西4局
+                      option 北1局
+                      option 北2局
+                      option 北3局
+                      option 北4局
+                tr
+                  td 和了
+                  td
+                    select.clickready.w100#hulejia
+                      option 東
+                      option 南
+                      option 西
+                      option 北
+                      option なし(流局)
+                tr
+                  td 放銃
+                  td
+                    select.clickready.w100#chongjia
+                      option 東
+                      option 南
+                      option 西
+                      option 北
+                      option なし(ツモ or 流局)
+      .caption.f100
+        button.toggle -
+        | LOAD/SAVE
+      .section.f075
+        center
+          table.w100(cellpadding='0', cellspacing='0')
+            tbody
+              tr.ifsync0
+                td
+                  button#editastext.w100 EDIT AS TEXT
+              tr.ifsync0
+                td
+                  button#loadfromurl.w100 LOAD FROM URL
+              tr
+                td
+                  button#saveasviewer.w100 SAVE AS VIEWER URL
+              tr.ifsync0
+                td
+                  button#opennextblank.w100 OPEN NEXT BLANK
+              tr.ifsync1
+                td
+                  button#clearfornext.w100 CLEAR FOR NEXT
+          .footnote Max URL Length(IE=2083, Apache=8177, HTML=1024-65536, BLOG=256-65536)
+          .ifsync0
+            br
+            input#autosave(type='checkbox', checked='', style='width:27px;height:27px;vertical-align:middle;')
+            | &#x81EA;&#x52D5;&#x4FDD;&#x5B58;
+            br
+            .footnote &#x203B;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x3068;URL HASH&#x304C;&#x66F4;&#x65B0;&#x3055;&#x308C;&#x307E;&#x3059;
+      br
+
+      -
+        var players = [
+          { l: 0, menfeng: '東', pos_start: 0 },
+          { l: 1, menfeng: '南', pos_start: 600 },
+          { l: 2, menfeng: '西', pos_start: 1200 },
+          { l: 3, menfeng: '北', pos_start: 1800 },
+        ]
+      each player in players
+        .caption.f100
+          button.toggle -
+          span.kaze #{player.menfeng}
+          input.un.clickready(id=`un${player.l}`)
+        .section(style='display:flex;justify-content: space-between;')
+          table(cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td.cellc 配
+                td.cells
+                  - for (var x = player.pos_start; x < player.pos_start + 13; x++)
+                    +pai_img()(class=`img69 clickready xy${x}`, src='img/pai/0/69.png', width='36', height='48')
+              tr
+                td
+                td.cells
+                  - for (var x = player.pos_start + 100; x < player.pos_start + 100 + 14; x++)
+                    +pai_img()(class=`img0 xy${x}`, src='img/blank.png', width='36', height='12')
+                  - for (var x = 314; x < 328; x++)
+                    +pai_img()(class=`img0 xy${x}`, src='img/blank.png', width='36', height='12', style='display: none;')
+              tr
+                td.cellc 摸
+                td.cells
+                  - for (var x = player.pos_start + 200; x < player.pos_start + 200 + 14; x++)
+                    +pai_img()(class=`img69 clickready xy${x}`, src='img/pai/0/69.png', width='36', height='48')
+                  - for (var x = player.pos_start + 200 + 14; x < player.pos_start + 200 + 28; x++)
+                    +pai_img()(class=`img69 clickready xy${x}`, src='img/pai/0/69.png', width='36', height='48', style='display: none;')
+              tr
+                td
+                td.cells
+                  - for (var x = player.pos_start + 300; x < player.pos_start + 300 + 14; x++)
+                    +pai_img()(class=`img0 xy${x}`, src='img/blank.png', width='36', height='12')
+                  - for (var x = player.pos_start + 300 + 14; x < player.pos_start + 300 + 28; x++)
+                    +pai_img()(class=`img0 xy${x}`, src='img/blank.png', width='36', height='12', style='display: none;')
+              tr
+                td.cellc 打
+                td.cells
+                  - for (var x = player.pos_start + 400; x < player.pos_start + 400 + 14; x++)
+                    +pai_img()(class=`img69 clickready xy${x}`, src='img/pai/0/69.png', width='36', height='48')
+                  - for (var x = player.pos_start + 400 + 14; x < player.pos_start + 400 + 28; x++)
+                    +pai_img()(class=`img69 clickready xy${x}`, src='img/pai/0/69.png', width='36', height='48', style='display: none;')
+              tr
+                td.cellc(style='width: 27px;')
+                  button.toggle
+                    | +
+                    br
+                    |                   终
+                  span.notoggle
+                    |                   终
+                td.cells.collapse(height='72', style='position: relative;')
+                  img.fshow(src='img/blank.png', width='5', height='72')
+          table(cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td.ten
+                  table
+                    tbody
+                      tr
+                        td 始
+                        td
+                          input.clickready(id=`ten${player.l}0` type='text', value='0', size='4', style='width:48px;text-align:center;')
+                      tr
+                        td 变
+                        td
+                          input.clickready(id=`ten${player.l}1` type='text', value='0', size='4', style='width:48px;text-align:center;')
+                      tr
+                        td 供
+                        td
+                          input.clickready(id=`ten${player.l}2` type='text', value='0', size='4', style='width:48px;text-align:center;')
+                      tr
+                        td 终
+                        td(id=`ten${player.l}3` style='width:46px;text-align:center;') 0
+    #outline.outline
+    .version

@@ -44,8 +44,8 @@ redraw(open) {
       let nn = m.match(/\d/g);
       mianzi.append(Majiang.View.pai('_'))
           .append(Majiang.View.pai('_'))
-          .append(Majiang.View.pai('_'))
           .append(Majiang.View.pai('_'));
+      this._open ? mianzi.append(Majiang.View.pai(m[0] + m[1])) : mianzi.append(Majiang.View.pai('_'));
     }
     else if (m.match(/^[mpsz](\d)\1\1\1?[\+\=\-]\1?$/)) {
       let jiagang = m.match(/[\+\=\-]\d$/);
