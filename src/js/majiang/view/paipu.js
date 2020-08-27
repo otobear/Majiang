@@ -282,24 +282,10 @@ _qipai(qipai) {
 
   this._model.shan = new Shan();
 
-  let player_id;
-  switch (qipai.quanfeng) {
-    // 换位
-    case 0:
-      player_id = [0, 1, 2, 3];
-      break;
-    case 1:
-      player_id = [1, 0, 3, 2];
-      break;
-    case 2:
-      player_id = [2, 3, 1, 0];
-      break;
-    case 3:
-      player_id = [3, 2, 0, 1];
-      break;
-  }
+  this._model.player_id = qipai.zuoci;
+
   for (let l = 0; l < 4; l++) {
-    this._model.player_id[l] = player_id[(l + this._model.jushu) % 4];
+    // this._model.player_id[l] = player_id[(l + this._model.jushu) % 4];
     this._model.defen[this._model.player_id[l]] = qipai.defen[l];
     this._model.shoupai[l] = Majiang.Shoupai.fromString(qipai.shoupai[l]);
     this._model.he[l] = new Majiang.He();
