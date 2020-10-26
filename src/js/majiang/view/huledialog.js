@@ -101,14 +101,14 @@ fenpei(fenpei) {
     let c = view_class[(l + 4 - this._chang.player_id.indexOf(0)) % 4];
     let node = $(`.${c}`, this._node.fenpei);
 
-    $('.feng', node).text(feng_hanzi[l]);
+    $('.feng', node).text(feng_hanzi[(l + this._viewpoint) % 4]);
 
     $('.player', node).text(this._chang.player[id]);
 
     let defen = ('' + this._chang.defen[id]).replace(/(\d)(\d{3})$/,'$1,$2');
     $('.defen', node).text(defen);
 
-    let diff = fenpei[l];
+    let diff = fenpei[(l + this._viewpoint) % 4];
     if (diff > 0) $('.diff', node).addClass('plus');
     else if (diff < 0) $('.diff', node).addClass('muinus');
     diff = (diff > 0) ? '+' + diff
