@@ -98,17 +98,19 @@ fenpei(fenpei) {
 
   for (let l = 0; l < 4; l++) {
     let id = this._chang.player_id[l];
-    let c = view_class[(l + 4 - this._chang.player_id.indexOf(0)) % 4];
+    let c = view_class[(this._chang.player_id.indexOf(id)
+                        - this._chang.player_id.indexOf(this._viewpoint)
+                        + 4) % 4];
     let node = $(`.${c}`, this._node.fenpei);
 
-    $('.feng', node).text(feng_hanzi[(l + this._viewpoint) % 4]);
+    $('.feng', node).text(feng_hanzi[l]);
 
     $('.player', node).text(this._chang.player[id]);
 
     let defen = ('' + this._chang.defen[id]).replace(/(\d)(\d{3})$/,'$1,$2');
     $('.defen', node).text(defen);
 
-    let diff = fenpei[(l + this._viewpoint) % 4];
+    let diff = fenpei[l];
     if (diff > 0) $('.diff', node).addClass('plus');
     else if (diff < 0) $('.diff', node).addClass('muinus');
     diff = (diff > 0) ? '+' + diff
