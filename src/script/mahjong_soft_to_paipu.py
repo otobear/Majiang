@@ -223,7 +223,11 @@ paipu = {}
 
 session = int(driver.execute_script('return new URL(location.href).searchParams.get("session")'))
 game = int(driver.execute_script('return new URL(location.href).searchParams.get("game")'))
-paipu['title'] = f'mahjongsoft_com_session_{session}_{game}'
+title = f'mahjongsoft_com_session_{session}_game_{game}'
+table = driver.execute_script('return new URL(location.href).searchParams.get("table")')
+if table:
+  title += f'_table_{table}'
+paipu['title'] = title
 player = []
 for i in range(4):
   player.append(driver.execute_script(f'return V.b[{i}].name'))
@@ -429,4 +433,6 @@ paipu['log'].append(log)
 paipu['defen'] = defen
 paipu['point'] = defen
 paipu['rank'] = [1, 2, 3, 4]
-print(json.dumps(paipu, ensure_ascii=False, separators=(',', ':')).encode('utf8').decode())
+
+with open(f'../../www/paipu/{paipu["title"]}.json', mode='w') as f:
+  f.write(json.dumps(paipu, ensure_ascii=False, separators=(',', ':')).encode('utf8').decode())
