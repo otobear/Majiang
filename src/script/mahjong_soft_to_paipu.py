@@ -236,21 +236,28 @@ paipu['qijia'] = 0
 
 paipu['log'] = []
 
-log = {}
+log = []
 qipai = {}
 qipai['quanfeng'] = game // 4
 qipai['jushu'] = game % 4
+qipai['zuoci'] = [0, 1, 2, 3]
 defen = []
+mopai_first = 0
 for i in range(4):
   defen.append(driver.execute_script(f'return V.b[{i}].M'))
 qipai['defen'] = defen
 shoupai = []
 for i in range(4):
-  shoupai.append(convert_pai_arr_to_str(sorted(driver.execute_script(f'return V.l[{i}].j'))))
+  peipai = driver.execute_script(f'return V.l[{i}].j')
+  if i == 0:
+    # 庄家14->13张
+    mopai_first = peipai[-1]
+    peipai = peipai[:-1]
+  shoupai.append(convert_pai_arr_to_str(sorted(peipai)))
 qipai['shoupai'] = shoupai
 
-log['qipai'] = qipai
-paipu['log'].append([log])
+log.append({'qipai': qipai})
+log.append({'zimo': {'l': 0, 'p': ms_to_pai[ms_arr[mopai_first]]}})
 
 shan = driver.execute_script('return V.V')
 history = driver.execute_script('return V.history')
@@ -311,17 +318,17 @@ while history_idx < len(history):
     # 途中补花
     buhua = {'l': l, 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
     log_ = {'buhua': buhua}
-    paipu['log'].append(log_)
+    log.append(log_)
 
     zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.V[0][V.V[0].length - 1]')]]}
     log_ = {'zimo': zimo}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 4
   elif history[history_idx:].startswith('DR'):
     # 打牌
     dapai = {'l': l, 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
     log_ = {'dapai': dapai}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 4
     l = (l + 1) % 4
   elif history[history_idx:].startswith('CK'):
@@ -330,29 +337,29 @@ while history_idx < len(history):
     fulou_ = ms_to_gang[fuloupai]
     gang = {'l': l, 'm': fulou_}
     log_ = {'gang': gang}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 4
     zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
     log_ = {'gangzimo': zimo}
-    paipu['log'].append(log_)
+    log.append(log_)
   elif history[history_idx:].startswith('MK'):
     # 加杠
     fuloupai = history[history_idx + 2:history_idx + 4]
     fulou_ = ms_to_gang[fuloupai]
     gang = {'l': l, 'm': fulou_}
     log_ = {'gang': gang}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 4
     gzimo = True
   elif history[history_idx:].startswith('MA'):
     # 自摸和
     log_ = {'hule': hule_json(l, None)}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 2
   elif history[history_idx:].startswith('FM'):
     # 错和
     log_ = {'cuohu': hule_json(l, None)}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 2
   elif history[history_idx:].startswith('PA'):
     # 摸牌
@@ -362,22 +369,22 @@ while history_idx < len(history):
       gzimo = False
     else:
       log_ = {'zimo': zimo}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 2
   elif history[history_idx:].startswith('R'):
     # 开局补花
     buhua = {'l': history[history_idx + 1], 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
     log_ = {'buhua': buhua}
-    paipu['log'].append(log_)
+    log.append(log_)
 
     zimo = {'l': history[history_idx + 1], 'p': ms_to_pai[ms_arr[driver.execute_script('return V.V[0][V.V[0].length - 1]')]]}
     log_ = {'zimo': zimo}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 4
   elif history[history_idx:].startswith('M'):
     # 点和
-    log_ = {'hule': hule_json(int(history[history_idx + 1]), l)}
-    paipu['log'].append(log_)
+    log_ = {'hule': hule_json(int(history[history_idx + 1]), l - 1)}
+    log.append(log_)
     history_idx += 2
   elif history[history_idx:].startswith('F'):
     print(f'UNKNOWN F!!! {history[history_idx:history_idx + 6]}')
@@ -388,7 +395,7 @@ while history_idx < len(history):
     fulou_idx = fulou_[1:].find(fuloupai[1:])
     fulou = {'l': history[history_idx + 1], 'm': fulou_[:fulou_idx + 2] + '-' + fulou_[fulou_idx + 2:]}
     log_ = {'fulou': fulou}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 4
   elif history[history_idx:].startswith('P'):
     # 碰
@@ -397,7 +404,7 @@ while history_idx < len(history):
     fulou_l = int(history[history_idx + 1])
     fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l  + 4 - l) % 4]}
     log_ = {'fulou': fulou}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 2
     l = fulou_l
   elif history[history_idx:].startswith('K'):
@@ -407,14 +414,19 @@ while history_idx < len(history):
     fulou_l = int(history[history_idx + 1])
     fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l  + 4 - l) % 4]}
     log_ = {'fulou': fulou}
-    paipu['log'].append(log_)
+    log.append(log_)
     history_idx += 2
     l = fulou_l
     zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
     log_ = {'gangzimo': zimo}
-    paipu['log'].append(log_)
+    log.append(log_)
   else:
     print(f'UNKNOWN ACTION!!! {history[history_idx:history_idx + 6]}')
   count += 1
 
-print(json.dumps(paipu, ensure_ascii=False).encode('utf8').decode())
+paipu['log'].append(log)
+# TODO:
+paipu['defen'] = defen
+paipu['point'] = defen
+paipu['rank'] = [1, 2, 3, 4]
+print(json.dumps(paipu, ensure_ascii=False, separators=(',', ':')).encode('utf8').decode())
