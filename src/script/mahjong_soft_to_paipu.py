@@ -15,8 +15,8 @@ driver.add_cookie({'name': 'language', 'value': 'cn'})
 # link = driver.find_element_by_xpath('//table[@id="table_sessions"]/tbody/tr[1]/td[2]/a').text
 # game_nums = driver.find_element_by_xpath('//table[@id="table_sessions"]/tbody/tr[1]/td[5]').text
 # paipu_link = f'https://mahjongsoft.com/mcrm_replay.php?session={link}&game=1'
-# paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=7616&game=15'
-paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=27543&game=10&table=4'
+paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=7616&game=15'
+# paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=27543&game=10&table=4'
 driver.get(paipu_link)
 
 ms_arr = [
@@ -178,7 +178,7 @@ def convert_pai_arr_to_str(pai_arr):
   p = [0, 0, 0, 0, 0, 0, 0, 0, 0]
   s = [0, 0, 0, 0, 0, 0, 0, 0, 0]
   z = [0, 0, 0, 0, 0, 0, 0]
-  h = 0
+  h = [0, 0, 0, 0, 0, 0, 0, 0]
   for pai in pai_arr:
     if pai <= 9:
       s[pai - 1] += 1
@@ -189,7 +189,7 @@ def convert_pai_arr_to_str(pai_arr):
     elif pai <= 34:
       z[pai - 28] += 1
     else:
-      h += 1
+      h[pai - 35] += 1
   if sum(m):
     qipais += 'm'
     for i in range(9):
@@ -214,8 +214,12 @@ def convert_pai_arr_to_str(pai_arr):
       while z[i]:
         qipais += str(i + 1)
         z[i] -= 1
-  if h:
-    qipais += f'h{h}'
+  if sum(h):
+    qipais += 'h'
+    for i in range(8):
+      while h[i]:
+        qipais += str(i + 1)
+        h[i] -= 1
   return qipais
 
 actions = ActionChains(driver)
@@ -242,8 +246,8 @@ paipu['log'] = []
 
 log = []
 qipai = {}
-qipai['quanfeng'] = game // 4
-qipai['jushu'] = game % 4
+qipai['quanfeng'] = (game - 1) // 4
+qipai['jushu'] = (game - 1) % 4
 qipai['zuoci'] = [0, 1, 2, 3]
 defen = []
 mopai_first = 0
