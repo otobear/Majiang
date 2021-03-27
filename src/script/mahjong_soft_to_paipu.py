@@ -15,8 +15,9 @@ driver.add_cookie({'name': 'language', 'value': 'cn'})
 # link = driver.find_element_by_xpath('//table[@id="table_sessions"]/tbody/tr[1]/td[2]/a').text
 # game_nums = driver.find_element_by_xpath('//table[@id="table_sessions"]/tbody/tr[1]/td[5]').text
 # paipu_link = f'https://mahjongsoft.com/mcrm_replay.php?session={link}&game=1'
-paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=7616&game=15'
+# paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=7616&game=15'
 # paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=27543&game=10&table=4'
+paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=26876&game=12'
 driver.get(paipu_link)
 
 ms_arr = [
@@ -106,22 +107,22 @@ ms_to_peng = {
   '9b': 's999',
   '1c': 'm111',
   '2c': 'm222',
-  '3c': 'm33',
+  '3c': 'm333',
   '4c': 'm444',
   '5c': 'm555',
   '6c': 'm666',
   '7c': 'm777',
   '8c': 'm888',
   '9c': 'm999',
-  '1d': 's111',
-  '2d': 's222',
-  '3d': 's333',
-  '4d': 's444',
-  '5d': 's555',
-  '6d': 's666',
-  '7d': 's777',
-  '8d': 's888',
-  '9d': 's999',
+  '1d': 'p111',
+  '2d': 'p222',
+  '3d': 'p333',
+  '4d': 'p444',
+  '5d': 'p555',
+  '6d': 'p666',
+  '7d': 'p777',
+  '8d': 'p888',
+  '9d': 'p999',
   'we': 'z111',
   'ws': 'z222',
   'ww': 'z333',
@@ -149,15 +150,15 @@ ms_to_gang = {
   '7c': 'm7777',
   '8c': 'm8888',
   '9c': 'm9999',
-  '1d': 's1111',
-  '2d': 's2222',
-  '3d': 's3333',
-  '4d': 's4444',
-  '5d': 's5555',
-  '6d': 's6666',
-  '7d': 's7777',
-  '8d': 's8888',
-  '9d': 's9999',
+  '1d': 'p1111',
+  '2d': 'p2222',
+  '3d': 'p3333',
+  '4d': 'p4444',
+  '5d': 'p5555',
+  '6d': 'p6666',
+  '7d': 'p7777',
+  '8d': 'p8888',
+  '9d': 'p9999',
   'we': 'z1111',
   'ws': 'z2222',
   'ww': 'z3333',
@@ -267,7 +268,6 @@ qipai['shoupai'] = shoupai
 log.append({'qipai': qipai})
 log.append({'zimo': {'l': 0, 'p': ms_to_pai[ms_arr[mopai_first]]}})
 
-shan = driver.execute_script('return V.V')
 history = driver.execute_script('return V.history')
 
 def hule_json(l, chongjia):
@@ -319,9 +319,12 @@ count = 0
 history_idx = 0
 l = 0
 gzimo = False
-while history_idx < len(history):
+
+def next_action():
   if driver.find_elements_by_xpath('//button[@id="nextaction_button"]'):
     driver.execute_script('document.getElementById("nextaction_button").click()')
+
+while history_idx < len(history):
   if history[history_idx:].startswith('RP'):
     # 途中补花
     buhua = {'l': l, 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
@@ -332,8 +335,10 @@ while history_idx < len(history):
     log_ = {'zimo': zimo}
     log.append(log_)
     history_idx += 4
+    next_action()
   elif history[history_idx:].startswith('DR'):
     # 打牌
+    next_action()
     dapai = {'l': l, 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
     log_ = {'dapai': dapai}
     log.append(log_)
@@ -341,6 +346,7 @@ while history_idx < len(history):
     l = (l + 1) % 4
   elif history[history_idx:].startswith('CK'):
     # 暗杠
+    next_action()
     fuloupai = history[history_idx + 2:history_idx + 4]
     fulou_ = ms_to_gang[fuloupai]
     gang = {'l': l, 'm': fulou_}
@@ -352,6 +358,7 @@ while history_idx < len(history):
     log.append(log_)
   elif history[history_idx:].startswith('MK'):
     # 加杠
+    next_action()
     fuloupai = history[history_idx + 2:history_idx + 4]
     fulou_ = ms_to_gang[fuloupai]
     gang = {'l': l, 'm': fulou_}
@@ -361,16 +368,19 @@ while history_idx < len(history):
     gzimo = True
   elif history[history_idx:].startswith('MA'):
     # 自摸和
+    next_action()
     log_ = {'hule': hule_json(l, None)}
     log.append(log_)
     history_idx += 2
   elif history[history_idx:].startswith('FM'):
     # 错和
+    next_action()
     log_ = {'cuohu': hule_json(l, None)}
     log.append(log_)
     history_idx += 2
   elif history[history_idx:].startswith('PA'):
     # 摸牌
+    next_action()
     zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
     if gzimo:
       log_ = {'gangzimo': zimo}
@@ -389,15 +399,19 @@ while history_idx < len(history):
     log_ = {'zimo': zimo}
     log.append(log_)
     history_idx += 4
+    next_action()
   elif history[history_idx:].startswith('M'):
     # 点和
+    next_action()
     log_ = {'hule': hule_json(int(history[history_idx + 1]), l - 1)}
     log.append(log_)
     history_idx += 2
   elif history[history_idx:].startswith('F'):
+    next_action()
     print(f'UNKNOWN F!!! {history[history_idx:history_idx + 6]}')
   elif history[history_idx:].startswith('C'):
     # 吃
+    next_action()
     fuloupai = ms_to_pai[history[history_idx - 2:history_idx]]
     fulou_ = ms_to_chi[history[history_idx + 2:history_idx + 4]]
     fulou_idx = fulou_[1:].find(fuloupai[1:])
@@ -407,20 +421,22 @@ while history_idx < len(history):
     history_idx += 4
   elif history[history_idx:].startswith('P'):
     # 碰
+    next_action()
     fuloupai = history[history_idx - 2:history_idx]
     fulou_ = ms_to_peng[fuloupai]
     fulou_l = int(history[history_idx + 1])
-    fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l  + 4 - l) % 4]}
+    fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l + 4 - l) % 4]}
     log_ = {'fulou': fulou}
     log.append(log_)
     history_idx += 2
     l = fulou_l
   elif history[history_idx:].startswith('K'):
     # 直杠
+    next_action()
     fuloupai = history[history_idx - 2:history_idx]
     fulou_ = ms_to_gang[fuloupai]
     fulou_l = int(history[history_idx + 1])
-    fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l  + 4 - l) % 4]}
+    fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l + 4 - l) % 4]}
     log_ = {'fulou': fulou}
     log.append(log_)
     history_idx += 2
@@ -429,6 +445,7 @@ while history_idx < len(history):
     log_ = {'gangzimo': zimo}
     log.append(log_)
   else:
+    next_action()
     print(f'UNKNOWN ACTION!!! {history[history_idx:history_idx + 6]}')
   count += 1
 
