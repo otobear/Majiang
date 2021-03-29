@@ -1,24 +1,14 @@
+from time import sleep
 import os
 import sys
 import time
 import json
+import logging
 import numpy as np
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.select import Select
-
-driver = webdriver.Chrome()
-driver.get('https://mahjongsoft.com/sessions.php')
-driver.delete_cookie('language')
-driver.add_cookie({'name': 'language', 'value': 'cn'})
-# link = driver.find_element_by_xpath('//table[@id="table_sessions"]/tbody/tr[1]/td[2]/a').text
-# game_nums = driver.find_element_by_xpath('//table[@id="table_sessions"]/tbody/tr[1]/td[5]').text
-# paipu_link = f'https://mahjongsoft.com/mcrm_replay.php?session={link}&game=1'
-# paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=7616&game=15'
-# paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=27543&game=10&table=4'
-paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=26876&game=12'
-driver.get(paipu_link)
 
 ms_arr = [
   'em', # 0
@@ -168,10 +158,6 @@ ms_to_gang = {
   'dw': 'z7777',
 }
 fulou_dir = ['-', '=', '+']
-num_to_fanzhong_name_zh = []
-for i in range(82):
-  num_to_fanzhong_name_zh.append(driver.execute_script(f'return STR["mcrfan{i+1}"]'))
-fanzhong_value = driver.execute_script('return lb')
 
 def convert_pai_arr_to_str(pai_arr):
   qipais = ''
@@ -223,237 +209,280 @@ def convert_pai_arr_to_str(pai_arr):
         h[i] -= 1
   return qipais
 
-actions = ActionChains(driver)
-paipu = {}
+driver = webdriver.Chrome()
+driver.get('https://mahjongsoft.com/sessions.php')
+driver.delete_cookie('language')
+driver.add_cookie({'name': 'language', 'value': 'cn'})
+# link = driver.find_element_by_xpath('//table[@id="table_sessions"]/tbody/tr[1]/td[2]/a').text
+# game_nums = driver.find_element_by_xpath('//table[@id="table_sessions"]/tbody/tr[1]/td[5]').text
+# paipu_link = f'https://mahjongsoft.com/mcrm_replay.php?session={link}&game=1'
+# paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=7616&game=15'
+# paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=27543&game=10&table=4'
+# paipu_link = 'https://mahjongsoft.com/mcrm_replay.php?session=26876&game=12'
+# 27543, 27453
+# 27341, 27090, 26984, 26764, 26574, 26484, 26324, 26254, 26133, 25991, 25927, 25777, 25705, 25450, 25305, 25258, 25186, 24935, 24796, 24748, 24660    , 24615, 24495, 24429, 24331, 24291, 24209, 24168, 23958, 23821, 23681, 23627, 23512, 23465, 23356, 23319
+tour_sessions = [23244, 23198, 23055, 22974, 22861, 22818, 22687, 22642, 22532, 22478, 22379, 22323, 22234, 22044, 21953, 21821, 21780, 21642, 21581, 21440, 21364, 21127, 21074, 20943, 20833, 20703, 20561, 20517, 20426, 20383, 20267, 20127, 20077, 19963, 19894, 19810, 19808, 19626, 19476, 19412, 19299, 19241, 19174, 19126, 18987, 18848, 18667, 18619, 18535, 18410, 18383, 18381, 18366, 18203, 18202, 17992, 17848, 17809, 17711, 17651, 17560, 17487, 17355, 17310, 17250, 17209, 17052, 17016, 16994, 16993, 16812, 16760, 16708, 16619, 16502, 16473, 16353, 16172, 16095, 16062, 16009, 15963, 15922, 15889, 15799, 15660, 15622, 15570, 15504, 15378, 15266, 15224, 15116, 15090, 15050, 14957, 14928, 14918, 14850, 14849, 14703, 14617, 14542, 14541, 14431, 14432, 14301, 14300, 14100, 13931, 13919, 13918, 13779, 13778, 13773, 13654, 13653, 13589, 13537, 13470, 13469, 13342, 13341, 13110, 13109, 13111, 13108, 13025, 13024, 12859, 12860, 12858, 12755, 12754, 12757, 12752, 12647, 12613, 12612, 12357, 12355, 12356, 12354, 12333, 12332, 12150, 12149, 12148, 12167, 12034, 11921, 11922, 11823, 11824, 11740, 11570, 11446, 11447, 11384, 11266, 11258, 11135, 11131, 11065, 11027, 10831, 10829, 10830, 10828, 10715, 10714, 10632, 10631, 10547, 10548, 10468, 10467, 10466, 10465, 10413, 10412, 10351, 10350, 10287, 10286, 10209, 10208, 10102, 9980, 9938, 9871, 9830, 9789, 9620, 9567, 9519, 9486, 9448, 9331, 9308, 9244, 9208, 9157, 9027, 9007, 8940, 8886, 8839, 8691, 8652, 8614, 8567, 8528, 8474, 8458, 8465, 8409, 8360, 8321, 8304, 8245, 8200, 8163, 5737, 5340, 5007, 4961, 4915, 4831, 4728, 4723, 4716, 4643, 4642, 4594, 4438, 4506, 4471, 4458, 4441, 4440, 4361, 4341, 4290, 4289, 4248, 4247, 4250, 4179, 4116, 3945, 3937, 3899, 3910, 3884, 3871, 3873, 3830, 3750, 3705, 3645, 3466, 3128, 3080, 2971, 2963]
 
-session = int(driver.execute_script('return new URL(location.href).searchParams.get("session")'))
-game = int(driver.execute_script('return new URL(location.href).searchParams.get("game")'))
-title = f'mahjongsoft_com_session_{session}_game_{game}'
-table = driver.execute_script('return new URL(location.href).searchParams.get("table")')
-if table:
-  title += f'_table_{table}'
-paipu['title'] = title
-player = []
-for i in range(4):
-  player.append(driver.execute_script(f'return V.b[{i}].name'))
-paipu['player'] = player
-nation = []
-for i in range(4):
-  nation.append(driver.execute_script(f'return V.b[{i}].qb'))
-paipu['nation'] = nation
-paipu['qijia'] = 0
+logging.basicConfig(filename='example.log', level=logging.ERROR)
+for ssid in tour_sessions:
+  tour_link = f'https://mahjongsoft.com/tourresults.php?id={ssid}'
+  driver.get(tour_link)
+  sleep(3)
+  game_num = int(driver.execute_script('return tournament.numdeals'))
+  table_num = int(driver.execute_script('return tournament.numplayers')) // 4
+  for gid in range(game_num):
+    for tid in range(table_num):
+      try:
+        paipu_link = f'https://mahjongsoft.com/mcrm_replay.php?session={ssid}&game={gid+1}&table={tid+1}'
+        driver.get(paipu_link)
 
-paipu['log'] = []
+        num_to_fanzhong_name_zh = []
+        for i in range(82):
+          num_to_fanzhong_name_zh.append(driver.execute_script(f'return STR["mcrfan{i+1}"]'))
+        fanzhong_value = driver.execute_script('return lb')
 
-log = []
-qipai = {}
-qipai['quanfeng'] = (game - 1) // 4
-qipai['jushu'] = (game - 1) % 4
-qipai['zuoci'] = [0, 1, 2, 3]
-defen = []
-mopai_first = 0
-for i in range(4):
-  defen.append(driver.execute_script(f'return V.b[{i}].M'))
-qipai['defen'] = defen
-shoupai = []
-for i in range(4):
-  peipai = driver.execute_script(f'return V.l[{i}].j')
-  if i == 0:
-    # 庄家14->13张
-    mopai_first = peipai[-1]
-    peipai = peipai[:-1]
-  shoupai.append(convert_pai_arr_to_str(sorted(peipai)))
-qipai['shoupai'] = shoupai
+        actions = ActionChains(driver)
+        paipu = {}
 
-log.append({'qipai': qipai})
-log.append({'zimo': {'l': 0, 'p': ms_to_pai[ms_arr[mopai_first]]}})
+        session = int(driver.execute_script('return new URL(location.href).searchParams.get("session")'))
+        game = int(driver.execute_script('return new URL(location.href).searchParams.get("game")'))
+        title = f'mahjongsoft_com_session_{session}_game_{game}'
+        table = driver.execute_script('return new URL(location.href).searchParams.get("table")')
+        if table:
+          title += f'_table_{table}'
+        paipu['title'] = title
+        player = []
+        for i in range(4):
+          player.append(driver.execute_script(f'return V.b[{i}].name'))
+        paipu['player'] = player
+        nation = []
+        for i in range(4):
+          nation.append(driver.execute_script(f'return V.b[{i}].qb'))
+        paipu['nation'] = nation
+        paipu['qijia'] = 0
 
-history = driver.execute_script('return V.history')
+        paipu['log'] = []
 
-def hule_json(l, chongjia):
-  fanzhong = []
-  zongfen = 0
-  fanzhong_num = driver.execute_script(f'return V.b[{l}].l.Ba.Da[0]')
-  if driver.execute_script(f'return V.b[{l}].l.Ba.hb') < 8:
-    fanzhong_num = fanzhong_num[:-2] + fanzhong_num[-1:]
-  for idx, f_num in enumerate(fanzhong_num):
-    if f_num > 0:
-      fanzhong.append({'name_zh': num_to_fanzhong_name_zh[idx], 'fenshu': fanzhong_value[idx] * f_num})
-      zongfen += fanzhong_value[idx] * f_num
+        log = []
+        qipai = {}
+        qipai['quanfeng'] = (game - 1) // 4
+        qipai['jushu'] = (game - 1) % 4
+        qipai['zuoci'] = [0, 1, 2, 3]
+        defen = []
+        mopai_first = 0
+        for i in range(4):
+          defen.append(driver.execute_script(f'return V.b[{i}].M'))
+        qipai['defen'] = defen
+        shoupai = []
+        for i in range(4):
+          peipai = driver.execute_script(f'return V.l[{i}].j')
+          if i == 0:
+            # 庄家14->13张
+            mopai_first = peipai[-1]
+            peipai = peipai[:-1]
+          shoupai.append(convert_pai_arr_to_str(sorted(peipai)))
+        qipai['shoupai'] = shoupai
 
-  shoupai = convert_pai_arr_to_str(driver.execute_script(f'return V.l[{l}].j')) + ms_to_pai[ms_arr[driver.execute_script(f'return V.b[{l}].l.h')]]
-  fulou_types = driver.execute_script(f'return V.l[{l}].g')
-  fulou_pais = driver.execute_script(f'return V.l[{l}].a')
-  fulou_idx = driver.execute_script(f'return V.l[{l}].Db')
-  for t, p, i in zip(fulou_types, fulou_pais, fulou_idx):
-    if t == 1:
-      # 吃
-      fulou_str = ms_to_chi[ms_arr[p]]
-      fulou_ = fulou_str[:i + 2] + '-' + fulou_str[i + 2:]
-      shoupai += f',{fulou_}'
-    elif t == 3:
-      # 碰
-      fulou_str = ms_to_peng[ms_arr[p]]
-      fulou_ = fulou_str + fulou_dir[i]
-      shoupai += f',{fulou_}'
-    elif t == 6:
-      # 加杠
-      fulou_str = ms_to_gang[ms_arr[p]]
-      fulou_ = fulou_str[:4] + fulou_dir[i] + fulou_str[4:]
-      shoupai += f',{fulou_}'
-    elif t == 7:
-      # 暗杠
-      fulou_= ms_to_gang[ms_arr[p]]
-      shoupai += f',{fulou_}'
-    else:
-      shoupai += ','
+        log.append({'qipai': qipai})
+        log.append({'zimo': {'l': 0, 'p': ms_to_pai[ms_arr[mopai_first]]}})
 
-  defen = driver.execute_script('return V.b')
-  hulefen = [d['O'] for d in defen]
-  fafen = [d['Ka'] for d in defen]
-  fenpei = [d['O'] + d['Ka'] for d in defen]
-  result = {'chongjia': chongjia, 'l': l, 'shoupai': shoupai, 'zongfen': zongfen, 'fanzhong': fanzhong, 'fenpei': fenpei}
-  return result
+        history = driver.execute_script('return V.history')
 
-count = 0
-history_idx = 0
-l = 0
-gzimo = False
+        def hule_json(l, chongjia):
+          fanzhong = []
+          zongfen = 0
+          fanzhong_num = driver.execute_script(f'return V.b[{l}].l.Ba.Da[0]')
+          if driver.execute_script(f'return V.b[{l}].l.Ba.hb') < 8:
+            fanzhong_num = fanzhong_num[:-2] + fanzhong_num[-1:]
+          for idx, f_num in enumerate(fanzhong_num):
+            if f_num > 0:
+              fanzhong.append({'name_zh': num_to_fanzhong_name_zh[idx], 'fenshu': fanzhong_value[idx] * f_num})
+              zongfen += fanzhong_value[idx] * f_num
 
-def next_action():
-  if driver.find_elements_by_xpath('//button[@id="nextaction_button"]'):
-    driver.execute_script('document.getElementById("nextaction_button").click()')
+          h_pai = None
+          hulepai = driver.execute_script(f'return V.b[{l}].l.h')
+          if hulepai:
+            h_pai = ms_to_pai[ms_arr[driver.execute_script(f'return V.b[{l}].l.h')]]
+          else:
+            h_pai = ms_to_pai[history[history_idx - 2:history_idx]]
+          shoupai = convert_pai_arr_to_str(driver.execute_script(f'return V.l[{l}].j')) + h_pai
+          fulou_types = driver.execute_script(f'return V.l[{l}].g')
+          fulou_pais = driver.execute_script(f'return V.l[{l}].a')
+          fulou_idx = driver.execute_script(f'return V.l[{l}].Db')
+          for t, p, i in zip(fulou_types, fulou_pais, fulou_idx):
+            if t == 1:
+              # 吃
+              fulou_str = ms_to_chi[ms_arr[p]]
+              fulou_ = fulou_str[:i + 2] + '-' + fulou_str[i + 2:]
+              shoupai += f',{fulou_}'
+            elif t == 3:
+              # 碰
+              fulou_str = ms_to_peng[ms_arr[p]]
+              fulou_ = fulou_str + fulou_dir[i]
+              shoupai += f',{fulou_}'
+            elif t == 6:
+              # 加杠
+              fulou_str = ms_to_gang[ms_arr[p]]
+              fulou_ = fulou_str[:4] + fulou_dir[i] + fulou_str[4:]
+              shoupai += f',{fulou_}'
+            elif t == 7:
+              # 暗杠
+              fulou_= ms_to_gang[ms_arr[p]]
+              shoupai += f',{fulou_}'
+            else:
+              shoupai += ','
 
-while history_idx < len(history):
-  if history[history_idx:].startswith('RP'):
-    # 途中补花
-    buhua = {'l': l, 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
-    log_ = {'buhua': buhua}
-    log.append(log_)
+          defen = driver.execute_script('return V.b')
+          hulefen = [d['O'] for d in defen]
+          fafen = [d['Ka'] for d in defen]
+          fenpei = [d['O'] + d['Ka'] for d in defen]
+          result = {'chongjia': chongjia, 'l': l, 'shoupai': shoupai, 'zongfen': zongfen, 'fanzhong': fanzhong, 'fenpei': fenpei}
+          return result
 
-    zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.V[0][V.V[0].length - 1]')]]}
-    log_ = {'zimo': zimo}
-    log.append(log_)
-    history_idx += 4
-    next_action()
-  elif history[history_idx:].startswith('DR'):
-    # 打牌
-    next_action()
-    dapai = {'l': l, 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
-    log_ = {'dapai': dapai}
-    log.append(log_)
-    history_idx += 4
-    l = (l + 1) % 4
-  elif history[history_idx:].startswith('CK'):
-    # 暗杠
-    next_action()
-    fuloupai = history[history_idx + 2:history_idx + 4]
-    fulou_ = ms_to_gang[fuloupai]
-    gang = {'l': l, 'm': fulou_}
-    log_ = {'gang': gang}
-    log.append(log_)
-    history_idx += 4
-    zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
-    log_ = {'gangzimo': zimo}
-    log.append(log_)
-  elif history[history_idx:].startswith('MK'):
-    # 加杠
-    next_action()
-    fuloupai = history[history_idx + 2:history_idx + 4]
-    fulou_ = ms_to_gang[fuloupai]
-    gang = {'l': l, 'm': fulou_}
-    log_ = {'gang': gang}
-    log.append(log_)
-    history_idx += 4
-    gzimo = True
-  elif history[history_idx:].startswith('MA'):
-    # 自摸和
-    next_action()
-    log_ = {'hule': hule_json(l, None)}
-    log.append(log_)
-    history_idx += 2
-  elif history[history_idx:].startswith('FM'):
-    # 错和
-    next_action()
-    log_ = {'cuohu': hule_json(l, None)}
-    log.append(log_)
-    history_idx += 2
-  elif history[history_idx:].startswith('PA'):
-    # 摸牌
-    next_action()
-    zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
-    if gzimo:
-      log_ = {'gangzimo': zimo}
-      gzimo = False
-    else:
-      log_ = {'zimo': zimo}
-    log.append(log_)
-    history_idx += 2
-  elif history[history_idx:].startswith('R'):
-    # 开局补花
-    buhua = {'l': history[history_idx + 1], 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
-    log_ = {'buhua': buhua}
-    log.append(log_)
+        count = 0
+        history_idx = 0
+        l = 0
+        gzimo = False
 
-    zimo = {'l': history[history_idx + 1], 'p': ms_to_pai[ms_arr[driver.execute_script('return V.V[0][V.V[0].length - 1]')]]}
-    log_ = {'zimo': zimo}
-    log.append(log_)
-    history_idx += 4
-    next_action()
-  elif history[history_idx:].startswith('M'):
-    # 点和
-    next_action()
-    log_ = {'hule': hule_json(int(history[history_idx + 1]), l - 1)}
-    log.append(log_)
-    history_idx += 2
-  elif history[history_idx:].startswith('F'):
-    next_action()
-    print(f'UNKNOWN F!!! {history[history_idx:history_idx + 6]}')
-  elif history[history_idx:].startswith('C'):
-    # 吃
-    next_action()
-    fuloupai = ms_to_pai[history[history_idx - 2:history_idx]]
-    fulou_ = ms_to_chi[history[history_idx + 2:history_idx + 4]]
-    fulou_idx = fulou_[1:].find(fuloupai[1:])
-    fulou = {'l': history[history_idx + 1], 'm': fulou_[:fulou_idx + 2] + '-' + fulou_[fulou_idx + 2:]}
-    log_ = {'fulou': fulou}
-    log.append(log_)
-    history_idx += 4
-  elif history[history_idx:].startswith('P'):
-    # 碰
-    next_action()
-    fuloupai = history[history_idx - 2:history_idx]
-    fulou_ = ms_to_peng[fuloupai]
-    fulou_l = int(history[history_idx + 1])
-    fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l + 4 - l) % 4]}
-    log_ = {'fulou': fulou}
-    log.append(log_)
-    history_idx += 2
-    l = fulou_l
-  elif history[history_idx:].startswith('K'):
-    # 直杠
-    next_action()
-    fuloupai = history[history_idx - 2:history_idx]
-    fulou_ = ms_to_gang[fuloupai]
-    fulou_l = int(history[history_idx + 1])
-    fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l + 4 - l) % 4]}
-    log_ = {'fulou': fulou}
-    log.append(log_)
-    history_idx += 2
-    l = fulou_l
-    zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
-    log_ = {'gangzimo': zimo}
-    log.append(log_)
-  else:
-    next_action()
-    print(f'UNKNOWN ACTION!!! {history[history_idx:history_idx + 6]}')
-  count += 1
+        def next_action():
+          if driver.find_elements_by_xpath('//button[@id="nextaction_button"]'):
+            driver.execute_script('document.getElementById("nextaction_button").click()')
 
-paipu['log'].append(log)
-# TODO:
-paipu['defen'] = defen
-paipu['point'] = defen
-paipu['rank'] = [1, 2, 3, 4]
+        while history_idx < len(history):
+          if history[history_idx:].startswith('RP'):
+            # 途中补花
+            buhua = {'l': l, 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
+            log_ = {'buhua': buhua}
+            log.append(log_)
 
-with open(f'../../www/paipu/{paipu["title"]}.json', mode='w') as f:
-  f.write(json.dumps(paipu, ensure_ascii=False, separators=(',', ':')).encode('utf8').decode())
+            zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.V[0][V.V[0].length - 1]')]]}
+            log_ = {'zimo': zimo}
+            log.append(log_)
+            history_idx += 4
+            next_action()
+          elif history[history_idx:].startswith('DR'):
+            # 打牌
+            next_action()
+            dapai = {'l': l, 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
+            log_ = {'dapai': dapai}
+            log.append(log_)
+            history_idx += 4
+            l = (l + 1) % 4
+          elif history[history_idx:].startswith('CK'):
+            # 暗杠
+            next_action()
+            fuloupai = history[history_idx + 2:history_idx + 4]
+            fulou_ = ms_to_gang[fuloupai]
+            gang = {'l': l, 'm': fulou_}
+            log_ = {'gang': gang}
+            log.append(log_)
+            history_idx += 4
+            zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
+            log_ = {'gangzimo': zimo}
+            log.append(log_)
+          elif history[history_idx:].startswith('MK'):
+            # 加杠
+            next_action()
+            fuloupai = history[history_idx + 2:history_idx + 4]
+            fulou_ = ms_to_gang[fuloupai]
+            gang = {'l': l, 'm': fulou_}
+            log_ = {'gang': gang}
+            log.append(log_)
+            history_idx += 4
+            gzimo = True
+          elif history[history_idx:].startswith('MA'):
+            # 自摸和
+            next_action()
+            log_ = {'hule': hule_json(l, None)}
+            log.append(log_)
+            history_idx += 2
+          elif history[history_idx:].startswith('FM'):
+            # 错和(自摸)
+            next_action()
+            log_ = {'cuohu': hule_json(l, None)}
+            log.append(log_)
+            history_idx += 2
+          elif history[history_idx:].startswith('PA'):
+            # 摸牌
+            next_action()
+            zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
+            if gzimo:
+              log_ = {'gangzimo': zimo}
+              gzimo = False
+            else:
+              log_ = {'zimo': zimo}
+            log.append(log_)
+            history_idx += 2
+          elif history[history_idx:].startswith('R'):
+            # 开局补花
+            buhua = {'l': history[history_idx + 1], 'p': ms_to_pai[history[history_idx + 2:history_idx + 4]]}
+            log_ = {'buhua': buhua}
+            log.append(log_)
+
+            zimo = {'l': history[history_idx + 1], 'p': ms_to_pai[ms_arr[driver.execute_script('return V.V[0][V.V[0].length - 1]')]]}
+            log_ = {'zimo': zimo}
+            log.append(log_)
+            history_idx += 4
+            next_action()
+          elif history[history_idx:].startswith('M'):
+            # 点和
+            next_action()
+            log_ = {'hule': hule_json(int(history[history_idx + 1]), l - 1)}
+            log.append(log_)
+            history_idx += 2
+          elif history[history_idx:].startswith('F'):
+            # 错和(点和)
+            next_action()
+            log_ = {'cuohu': hule_json(int(history[history_idx + 1]), l - 1)}
+            log.append(log_)
+            history_idx += 2
+          elif history[history_idx:].startswith('C'):
+            # 吃
+            next_action()
+            fuloupai = ms_to_pai[history[history_idx - 2:history_idx]]
+            fulou_ = ms_to_chi[history[history_idx + 2:history_idx + 4]]
+            fulou_idx = fulou_[1:].find(fuloupai[1:])
+            fulou = {'l': history[history_idx + 1], 'm': fulou_[:fulou_idx + 2] + '-' + fulou_[fulou_idx + 2:]}
+            log_ = {'fulou': fulou}
+            log.append(log_)
+            history_idx += 4
+          elif history[history_idx:].startswith('P'):
+            # 碰
+            next_action()
+            fuloupai = history[history_idx - 2:history_idx]
+            fulou_ = ms_to_peng[fuloupai]
+            fulou_l = int(history[history_idx + 1])
+            fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l + 4 - l) % 4]}
+            log_ = {'fulou': fulou}
+            log.append(log_)
+            history_idx += 2
+            l = fulou_l
+          elif history[history_idx:].startswith('K'):
+            # 直杠
+            next_action()
+            fuloupai = history[history_idx - 2:history_idx]
+            fulou_ = ms_to_gang[fuloupai]
+            fulou_l = int(history[history_idx + 1])
+            fulou = {'l': fulou_l, 'm': fulou_ + fulou_dir[(fulou_l + 4 - l) % 4]}
+            log_ = {'fulou': fulou}
+            log.append(log_)
+            history_idx += 2
+            l = fulou_l
+            zimo = {'l': l, 'p': ms_to_pai[ms_arr[driver.execute_script('return V.Na')]]}
+            log_ = {'gangzimo': zimo}
+            log.append(log_)
+          else:
+            next_action()
+            print(f'UNKNOWN ACTION!!! {history[history_idx:history_idx + 6]}')
+          count += 1
+
+        paipu['log'].append(log)
+        # TODO:
+        paipu['defen'] = defen
+        paipu['point'] = defen
+        paipu['rank'] = [1, 2, 3, 4]
+      except Exception as e:
+        logging.error(f'{e} {ssid}_{gid+1}_{tid+1}')
+      else:
+        with open(f'../../www/paipu/mahjongsoft_com/duplicate/{paipu["title"]}.json', mode='w') as f:
+          f.write(json.dumps(paipu, ensure_ascii=False, separators=(',', ':')).encode('utf8').decode())
