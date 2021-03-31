@@ -7,6 +7,7 @@ module.exports = {
     paipu_edit_single: './src/js/paipu_edit_single.js',
     paipu_edit_test: './src/js/paipu_edit_test.js',
     paipu_editer: './src/js/paipu_editer.js',
+    statistics: './src/js/statistics.js',
   },
   output: {
     path: __dirname + '/www/js/',
