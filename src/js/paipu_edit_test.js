@@ -85,6 +85,8 @@
       }
       return typeChar + num;
     }
+    // 将 tenhou 副露格式转成需要的副露格式
+    // 例: c383739 -> m78-9
     function fulouToFulouString(fulou) {
       let [_, fulouCode, fulouPai] = fulou.match(/([pmc])(\d\d)/);
       let fulouCharPos;
@@ -835,8 +837,9 @@
               // 自摸牌分开放
               if (zimopai) finalStrings[section] += paiNumToString(zimopai);
               if (fulous.length) {
-                debugger;
-                finalStrings[section] += fulous.reduce((l, r) => l + ',' + fulouToFulouString(r));
+                for (let fl = 0; fl < fulous.length; ++fl) {
+                  finalStrings[section] += ',' + fulouToFulouString(fulous[fl]);
+                }
               }
 
               directions[section][d] |= 0;
