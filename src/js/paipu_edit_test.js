@@ -1954,10 +1954,10 @@
         let fulouShoupai = log[log.length - 1]['hule']['shoupai'];
         let fulouIndex = fulouShoupai.indexOf(',');
         if (fulouIndex >= 0) {
-          fulouShoupai = fulouString.substring(0, fulouIndex)
-                         + _log[_log.length - 1]['dapai']['p']
-                         + ','
-                         + fulouString.substring(fulouIndex + 1);
+          log[log.length - 1]['hule']['shoupai'] = fulouShoupai.substring(0, fulouIndex)
+                                                   + _log[_log.length - 1]['dapai']['p']
+                                                   + ','
+                                                   + fulouShoupai.substring(fulouIndex + 1);
         } else {
           log[log.length - 1]['hule']['shoupai'] += _log[_log.length - 1]['dapai']['p'];
         }
