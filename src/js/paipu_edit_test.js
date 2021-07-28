@@ -1951,7 +1951,16 @@
       // 点和的和牌形
       log.push(JSON.parse(JSON.stringify(N.result)));
       if (N.result && N.result['hule'] && _log.length && _log[_log.length - 1]['dapai']) {
-        log[log.length - 1]['hule']['shoupai'] += _log[_log.length - 1]['dapai']['p'];
+        let fulouShoupai = log[log.length - 1]['hule']['shoupai'];
+        let fulouIndex = fulouShoupai.indexOf(',');
+        if (fulouIndex >= 0) {
+          fulouShoupai = fulouString.substring(0, fulouIndex)
+                         + _log[_log.length - 1]['dapai']['p']
+                         + ','
+                         + fulouString.substring(fulouIndex + 1);
+        } else {
+          log[log.length - 1]['hule']['shoupai'] += _log[_log.length - 1]['dapai']['p'];
+        }
       }
       let paipu = {
         title: gebi('paipuTitle').value,
