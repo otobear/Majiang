@@ -85,11 +85,17 @@
       }
       return typeChar + num;
     }
+    // 将 tenhou 副露格式转成需要的副露格式
+    // 例: c393738 -> m789-
     function fulouToFulouString(fulou) {
-      let [_, fulouCode, fulouPai] = fulou.match(/([pmc])(\d\d)/);
+      let [_, fulouCode, fulouPai] = fulou.match(/([pmcak])(\d\d)/);
       let fulouCharPos;
       let fulouFrom = fulou.indexOf(fulouCode) / 2;
       let fulouChar = ['-', '=', '+'][fulouFrom];
+      // 暗杠和明杠为自己摸牌
+      if (fulouCode == 'a' || fulouCode == 'k') {
+        fulouChar = '';
+      }
       let pais = [...fulou.matchAll(/\d\d/g)].map(x => x[0]).sort();
       if (fulouCode == 'c') {
         fulouCharPos = pais.indexOf(fulouPai);
@@ -99,6 +105,9 @@
       let fulouString = paiNumToString(pais[0])
                         + paiNumToString(pais[1]).substring(1)
                         + paiNumToString(pais[2]).substring(1);
+      if (pais.length == 4) {
+        fulouString += paiNumToString(pais[3]).substring(1);
+      }
       fulouString = fulouString.substring(0, fulouCharPos + 2)
                     + fulouChar
                     + fulouString.substring(fulouCharPos + 2);
@@ -145,22 +154,7 @@
           if (mopai.length == void 0) {
             moRawTran[seat].push({"zimo": {"l": seat, "p": paiNumToString(mopai)}});
           } else {
-            // let [_, fulouCode, fulouPai] = mopai.match(/([pmc])(\d\d)/);
-            // let fulouFrom = mopai.indexOf(fulouCode) / 2;
-            // let fulouChar = ['-', '=', '+'][fulouFrom];
-            // let pais = [...mopai.matchAll(/\d\d/g)].map(x => x[0]).sort();
-            // if (fulouCode == 'c') {
-            //   fulouCharPos = pais.indexOf(fulouPai);
-            // } else {
-            //   fulouCharPos = 2;
-            // }
-            // let fulouString = paiNumToString(pais[0])
-            //                   + paiNumToString(pais[1]).substring(1)
-            //                   + paiNumToString(pais[2]).substring(1);
-            // fulouString = fulouString.substring(0, fulouCharPos + 2)
-            //               + fulouChar
-            //               + fulouString.substring(fulouCharPos + 2);
-            // moRawTran[seat].push({"fulou": {"l": seat, "m": fulouString}});
+            // 副露
             moRawTran[seat].push({"fulou": {"l": seat, "m": fulouToFulouString(mopai)}});
           }
         }
@@ -175,7 +169,8 @@
             }
             daRawTran[seat].push({"dapai": {"l": seat, "p": dapai}});
           } else {
-            // TODO:
+            // 暗杠、加杠
+            daRawTran[seat].push({"gang": {"l": seat, "m": fulouToFulouString(dapai)}});
           }
         }
 
@@ -185,31 +180,50 @@
 
       seat = 0;
       lunshu = 0;
+
+      function rewindLogs(zuoci) {
+        if (moPaipus[zuoci] && moPaipus[zuoci].length) {
+          moRawTran[zuoci].unshift(moPaipus[zuoci].pop());
+          daRawTran[zuoci].unshift(daPaipus[zuoci].pop());
+          moPaipus[zuoci].push({});
+          daPaipus[zuoci].push({});
+        } else {
+          moRawTran[zuoci].unshift({});
+          daRawTran[zuoci].unshift({});
+        }
+      }
+
+      function insertBlankLogs(zuoci) {
+        moPaipus[zuoci].push({});
+        daPaipus[zuoci].push({});
+      }
+
       while (lunshu <= 31) {
         if (moRawTran[seat].length) {
           let moLog = moRawTran[seat].shift();
           let daLog = daRawTran[seat].shift();
           moPaipus[seat].push(moLog);
           daPaipus[seat].push(daLog);
-          if (moLog['fulou']) {
+          if (moLog && moLog['fulou']) {
             if (moLog['fulou']['m'].match('[=]')) {
               let shangjia = (seat + 3) % 4;
-              moRawTran[shangjia].unshift(moPaipus[shangjia].pop());
-              daRawTran[shangjia].unshift(daPaipus[shangjia].pop());
-              moPaipus[shangjia].push({});
-              daPaipus[shangjia].push({});
+              rewindLogs(shangjia);
             } else if (moLog['fulou']['m'].match('[+]')) {
               let shangjia = (seat + 3) % 4;
-              moRawTran[shangjia].unshift(moPaipus[shangjia].pop());
-              daRawTran[shangjia].unshift(daPaipus[shangjia].pop());
-              moPaipus[shangjia].push({});
-              daPaipus[shangjia].push({});
+              rewindLogs(shangjia);
               let duijia = (seat + 2) % 4;
-              moRawTran[duijia].unshift(moPaipus[duijia].pop());
-              daRawTran[duijia].unshift(daPaipus[duijia].pop());
-              moPaipus[duijia].push({});
-              daPaipus[duijia].push({});
+              rewindLogs(duijia);
             }
+          }
+          if (daLog && daLog['gang']) {
+            let shangjia = (seat + 3) % 4;
+            insertBlankLogs(shangjia);
+            let duijia = (seat + 2) % 4;
+            insertBlankLogs(duijia);
+            let xiajia = (seat + 1) % 4;
+            insertBlankLogs(xiajia);
+            ++lunshu;
+            continue;
           }
         }
 
@@ -223,7 +237,7 @@
         if (moPaipus[seat].length) {
           let moPaipu = moPaipus[seat].shift();
           let daPaipu = daPaipus[seat].shift();
-          if (Object.keys(moPaipu).length) {
+          if (moPaipu && Object.keys(moPaipu).length) {
             if (moPaipu) returnLog.push(moPaipu);
             if (daPaipu) returnLog.push(daPaipu);
           }
@@ -835,8 +849,9 @@
               // 自摸牌分开放
               if (zimopai) finalStrings[section] += paiNumToString(zimopai);
               if (fulous.length) {
-                debugger;
-                finalStrings[section] += fulous.reduce((l, r) => l + ',' + fulouToFulouString(r));
+                for (let fl = 0; fl < fulous.length; ++fl) {
+                  finalStrings[section] += ',' + fulouToFulouString(fulous[fl]);
+                }
               }
 
               directions[section][d] |= 0;
@@ -1200,7 +1215,7 @@
       // TODO: (la)
       // view 相关
       , Q = function() {
-        // 删除所有 .pushed
+        // 删除所有 .pushed(panel 内被选中项目)
         // return: 原本含 .pushed class 的牌字符串
         function removePushedCells() {
           let pushedCells = panel.getElementsByClassName('pushed');
@@ -1936,7 +1951,16 @@
       // 点和的和牌形
       log.push(JSON.parse(JSON.stringify(N.result)));
       if (N.result && N.result['hule'] && _log.length && _log[_log.length - 1]['dapai']) {
-        log[log.length - 1]['hule']['shoupai'] += _log[_log.length - 1]['dapai']['p'];
+        let fulouShoupai = log[log.length - 1]['hule']['shoupai'];
+        let fulouIndex = fulouShoupai.indexOf(',');
+        if (fulouIndex >= 0) {
+          log[log.length - 1]['hule']['shoupai'] = fulouShoupai.substring(0, fulouIndex)
+                                                   + _log[_log.length - 1]['dapai']['p']
+                                                   + ','
+                                                   + fulouShoupai.substring(fulouIndex + 1);
+        } else {
+          log[log.length - 1]['hule']['shoupai'] += _log[_log.length - 1]['dapai']['p'];
+        }
       }
       let paipu = {
         title: gebi('paipuTitle').value,
