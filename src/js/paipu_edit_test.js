@@ -85,20 +85,25 @@
       }
       return typeChar + num;
     }
-    // 将 tenhou 副露格式转成需要的副露格式
+    // 将 tenhou 副露格式转成 paipu 副露格式
     // 例: c393738 -> m789-
     function fulouToFulouString(fulou) {
       let [_, fulouCode, fulouPai] = fulou.match(/([pmcak])(\d\d)/);
       let fulouCharPos;
       let fulouFrom = fulou.indexOf(fulouCode) / 2;
+      // TODO: 临时代码。需要更改明杠格式(ba.J)来解决
+      if (fulouCode == 'm' && fulouFrom == 3) {
+        fulouFrom = 2;
+      }
       let fulouChar = ['-', '=', '+'][fulouFrom];
-      // 暗杠和明杠为自己摸牌
-      if (fulouCode == 'a' || fulouCode == 'k') {
+      if (fulouCode == 'a') {
         fulouChar = '';
       }
       let pais = [...fulou.matchAll(/\d\d/g)].map(x => x[0]).sort();
       if (fulouCode == 'c') {
         fulouCharPos = pais.indexOf(fulouPai);
+      } else if (fulouCode == 'm') {
+        fulouCharPos = 4;
       } else {
         fulouCharPos = 2;
       }
@@ -132,8 +137,10 @@
     }
     function rawToPaipu(logs) {
       let returnLog = [];
+      // logs 内容原封不动
       let moRaws = [[], [], [], []];
       let daRaws = [[], [], [], []];
+      // logs 内容转换成 paipu 格式
       let moRawTran = [[], [], [], []];
       let daRawTran = [[], [], [], []];
       for (let i = 0; i < 4; ++i) {
@@ -142,16 +149,19 @@
       }
       let seat = 0;
       let lunshu = 0;
+      // 返回值
       let moPaipus = [[], [], [], []];
       let daPaipus = [[], [], [], []];
 
       // let fulouCharPos;
       let mopai;
       let dapai;
+      // log -> paipu
       while (lunshu <= 31) {
         if (moRaws[seat].length) {
           mopai = moRaws[seat].shift();
           if (mopai.length == void 0) {
+            // 摸牌
             moRawTran[seat].push({"zimo": {"l": seat, "p": paiNumToString(mopai)}});
           } else {
             // 副露
@@ -162,9 +172,18 @@
         if (daRaws[seat].length) {
           dapai = daRaws[seat].shift();
           if (dapai.length == void 0) {
+            // 明杠后无需打牌
+            if (dapai == 0) {
+              daRawTran[seat].push({});
+              continue;
+            }
+
+            // 打牌
             if (dapai == 60) {
+              // 摸切
               dapai = paiNumToString(mopai) + '_';
             } else {
+              // 手切
               dapai = paiNumToString(dapai);
             }
             daRawTran[seat].push({"dapai": {"l": seat, "p": dapai}});
@@ -198,23 +217,39 @@
         daPaipus[zuoci].push({});
       }
 
+      // 调整因副露造成的 paipu 顺序变化
       while (lunshu <= 31) {
         if (moRawTran[seat].length) {
           let moLog = moRawTran[seat].shift();
           let daLog = daRawTran[seat].shift();
           moPaipus[seat].push(moLog);
           daPaipus[seat].push(daLog);
-          if (moLog && moLog['fulou']) {
-            if (moLog['fulou']['m'].match('[=]')) {
-              let shangjia = (seat + 3) % 4;
-              rewindLogs(shangjia);
-            } else if (moLog['fulou']['m'].match('[+]')) {
-              let shangjia = (seat + 3) % 4;
-              rewindLogs(shangjia);
-              let duijia = (seat + 2) % 4;
-              rewindLogs(duijia);
+          if (moLog) {
+            if (moLog['fulou']) {
+              if (moLog['fulou']['m'].match('[=]')) {
+                let shangjia = (seat + 3) % 4;
+                rewindLogs(shangjia);
+              } else if (moLog['fulou']['m'].match('[+]')) {
+                let shangjia = (seat + 3) % 4;
+                rewindLogs(shangjia);
+                let duijia = (seat + 2) % 4;
+                rewindLogs(duijia);
+              }
+
+              // 明杠
+              if (moLog['fulou']['m'].length == 6) {
+                let shangjia = (seat + 3) % 4;
+                insertBlankLogs(shangjia);
+                let duijia = (seat + 2) % 4;
+                insertBlankLogs(duijia);
+                let xiajia = (seat + 1) % 4;
+                insertBlankLogs(xiajia);
+                ++lunshu;
+                continue;
+              }
             }
           }
+          // 仅限暗杠和加杠
           if (daLog && daLog['gang']) {
             let shangjia = (seat + 3) % 4;
             insertBlankLogs(shangjia);
@@ -235,12 +270,11 @@
       lunshu = 0;
       while (lunshu <= 31) {
         if (moPaipus[seat].length) {
+          // 明杠只有 moPaipu
           let moPaipu = moPaipus[seat].shift();
+          if (moPaipu && Object.keys(moPaipu).length) { returnLog.push(moPaipu); }
           let daPaipu = daPaipus[seat].shift();
-          if (moPaipu && Object.keys(moPaipu).length) {
-            if (moPaipu) returnLog.push(moPaipu);
-            if (daPaipu) returnLog.push(daPaipu);
-          }
+          if (daPaipu && Object.keys(daPaipu).length) { returnLog.push(daPaipu); }
         }
         seat = (seat + 1) % 4;
         if (seat == 0) ++lunshu;
@@ -323,7 +357,7 @@
             // f, c, e: 赤牌数量
             // return: 副露种类
             // c: 吃，p: 碰，a: 暗杠，k: 加杠，m: 大明杠
-            // c11: ['c111213'], c12: ['c121113', 'c121314'], c13: ['131112', 'c131214', 'c131415'], ...
+            // c11: ['c111213'], c12: ['c121113', 'c121314'], c13: ['c131112', 'c131214', 'c131415'], ...
             // p11: ['p111111', '11p1111', '1111p11'], ...
             // a11: ['111111a11'], ...
             // k11: ['k11111111', '11k111111', '1111k1111'], ...
