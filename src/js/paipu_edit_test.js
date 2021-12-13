@@ -30,6 +30,20 @@
         }
       });
     });
+    function getLunhuanZuoci() {
+      // return [
+      //   [0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2],
+      //   [1, 0, 3, 2], [0, 3, 2, 1], [3, 2, 1, 0], [2, 1, 0, 3],
+      //   [2, 3, 1, 0], [3, 1, 0, 2], [1, 0, 2, 3], [0, 2, 3, 1],
+      //   [3, 2, 0, 1], [2, 0, 1, 3], [0, 1, 3, 2], [1, 3, 2, 0]
+      // ];
+      return [
+        [0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2],
+        [0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2],
+        [1, 0, 3, 2], [0, 3, 2, 1], [3, 2, 1, 0], [2, 1, 0, 3],
+        [1, 0, 3, 2], [0, 3, 2, 1], [3, 2, 1, 0], [2, 1, 0, 3],
+      ];
+    }
 
     var l = document
       , p = l.body;
@@ -915,13 +929,13 @@
             for (let i = 0; ; ) {
               // TODO: remove
               if (c != -1) {
-                debugger;
+                // debugger;
                 alert('lizhi');
                 b[c] = true;
                 c = 1;
               }
               if (directions[i][colNums[i]] & 8) {
-                debugger;
+                // debugger;
                 alert('lizhi2');
                 c = i;
               }
@@ -1661,7 +1675,7 @@
             // 07: ←, 08: →, 0: 空白
             if (pai === 7 || pai === 8 || pai === 0) {
               // TODO: remove
-              debugger;
+              // debugger;
               pd();
               Q.processKeyEvent(48 + (pai ? pai : 9));
               // TODO: ???
@@ -1741,7 +1755,7 @@
     }();
     // TODO: unknown
     function U(d, f) {
-      debugger;
+        // debugger;
         if (l.activeElement === d)
             return !1;
         var c, e = d.options, a;
@@ -1791,7 +1805,7 @@
             B.o(0, 0, 0);
             let log = paipu.log;
             if (e) {
-              debugger;
+              // debugger;
             }
             if (log && log[c || 0]) {
               // TODO: c
@@ -1985,7 +1999,7 @@
         },
         // TODO: unknown
         u: function(c, a, b) {
-          debugger;
+          // debugger;
             var e = "/6/mjlog_storage.cgi";
             c && (e += "?" + c);
             c.match(/^load=(\d{8,10}gm\-[0-9a-f]{4}\-\d{4,5}\-x?[0-9a-f]{8,16})$/) && (e = "/5/mjlog2json.cgi?" + RegExp.$1);
@@ -1999,7 +2013,7 @@
         },
         // TODO: remove
         N: function() {
-          debugger;
+          // debugger;
             setTimeout(function() {
                 var e = JSON.stringify(d);
                 d.splice(0, d.length);
@@ -2154,6 +2168,30 @@
         //     this.parentNode.parentNode.parentNode.parentNode.classList.toggle("showdetail"); // 和了栏
         // }
         // ;
+        q('generateheader').onclick = function() {
+          pd();
+          let a = window.prompt(this.innerText, '{"title":"' + gebi('paipuTitle').value + '","player":["' + gebi('un0').value + '","' + gebi('un1').value + '","' + gebi('un2').value + '","' + gebi('un3').value + '"],"qijia":0,"log":[');
+          null !== a && W(a, 0, !1);
+          L.appendFunction('storage.autoSave', S.updateURL)
+        };
+        q('generatefooter').onclick = function() {
+          // TODO: 同分
+          pd();
+          let fenshus = [~~gebi('ten03').innerText, ~~gebi('ten13').innerText, ~~gebi('ten23').innerText, ~~gebi('ten33').innerText];
+          let ranks = [1, 1, 1, 1];
+          let points = [4, 4, 4, 4];
+          for (let i = 0; i < 4; ++i) {
+            for (let j = 0; j < 4; ++j) {
+              if (fenshus[j] > fenshus[i]) {
+                ++ranks[i];
+                --points[i];
+              }
+            }
+          }
+          let a = window.prompt(this.innerText, '],"defen":[' + fenshus.join() + '],"point":[' + points.join() + '],"rank":[' + ranks.join() + ']}');
+          null !== a && W(a, 0, !1);
+          L.appendFunction('storage.autoSave', S.updateURL)
+        };
         q('editastext').onclick = function() {
             pd();
             var a = window.prompt(this.innerText, JSON.stringify(JSON.parse(generatePaipu())['log'][0]));
@@ -2175,48 +2213,90 @@
             pd();
             window.open("paipu.html#" + generatePaipu(true), "_blank")
         };
-        // TODO: remove
         q("clearfornext").onclick = function() {
-            if (window.confirm("次局入力用にルール/タイトル以外の情報をクリアします。\n※現在の牌譜は「SAVE AS VIEWER URL」で保存してください")) {
-                var a = {
-                    title: [gebi('paipuTitle').value],
-                    player: [q("un0").value, q("un1").value, q("un2").value, q("un3").value],
-                    rule: {
-                        disp: q("disp").value,
-                        aka51: q("aka51").selectedIndex,
-                        aka52: q("aka52").selectedIndex,
-                        aka53: q("aka53").selectedIndex
-                    },
-                    // log: [[[q("kyoku").selectedIndex, q("honba").selectedIndex, q("kyoutaku").selectedIndex], [100 * ~~u("ten0")[1].innerText, 100 * ~~u("ten1")[1].innerText, 100 * ~~u("ten2")[1].innerText, 100 * ~~u("ten3")[1].innerText]]]
-                    log: [[[q("kyoku").selectedIndex], [100 * ~~u("ten0")[1].innerText, 100 * ~~u("ten1")[1].innerText, 100 * ~~u("ten2")[1].innerText, 100 * ~~u("ten3")[1].innerText]]]
-                };
-                S.u("", "file=" + H.sync + "&json=");
-                // var c = [[q("kyoku").selectedIndex, q("honba").selectedIndex, q("kyoutaku").selectedIndex], [100 * ~~u("ten0")[1].innerText, 100 * ~~u("ten1")[1].innerText, 100 * ~~u("ten2")[1].innerText, 100 * ~~u("ten3")[1].innerText]];
-                var c = [[q("kyoku").selectedIndex], [100 * ~~u("ten0")[1].innerText, 100 * ~~u("ten1")[1].innerText, 100 * ~~u("ten2")[1].innerText, 100 * ~~u("ten3")[1].innerText]];
-                a.log[0][2] += ~~((~~q("ten0").value + ~~q("ten1").value + ~~q("ten2").value + ~~q("ten3").value - (~~u("ten0")[1].innerText + ~~u("ten1")[1].innerText + ~~u("ten2")[1].innerText + ~~u("ten3")[1].innerText)) / 10);
-                S.appendOperationLog({
-                    path: "/title",
-                    val: a.title
-                });
-                S.appendOperationLog({
-                    path: "/player",
-                    val: a.player
-                });
-                // S.appendOperationLog({
-                //     path: Z.disp,
-                //     val: a.rule.disp
-                // });
-                S.appendOperationLog({
-                    path: "/log/0/0",
-                    val: c[0]
-                });
-                S.appendOperationLog({
-                    path: "/log/0/1",
-                    val: c[1]
-                })
+          if (window.confirm("次局入力用にルール/タイトル以外の情報をクリアします。\n※現在の牌譜は「SAVE AS VIEWER URL」で保存してください")) {
+            // S.u("", "file=" + H.sync + "&json=");
+            S.appendOperationLog({
+              path: Z['kyoku'],
+              val: gebi('kyoku').selectedIndex + 1
+            });
+            S.appendOperationLog({
+              path: Z['hulejia'],
+              val: 4
+            });
+            S.appendOperationLog({
+              path: Z['chongjia'],
+              val: 4
+            });
+            if (gebi('kyoku').selectedIndex == 7) {
+              S.appendOperationLog({
+                path: '/log/0/1/0',
+                val: ~~gebi('ten23').innerText
+              });
+              S.appendOperationLog({
+                path: '/log/0/1/3',
+                val: ~~gebi('ten13').innerText
+              });
+              S.appendOperationLog({
+                path: '/log/0/1/6',
+                val: ~~gebi('ten03').innerText
+              });
+              S.appendOperationLog({
+                path: '/log/0/1/9',
+                val: ~~gebi('ten33').innerText
+              });
+            } else {
+              S.appendOperationLog({
+                path: '/log/0/1/0',
+                val: ~~gebi('ten13').innerText
+              });
+              S.appendOperationLog({
+                path: '/log/0/1/3',
+                val: ~~gebi('ten23').innerText
+              });
+              S.appendOperationLog({
+                path: '/log/0/1/6',
+                val: ~~gebi('ten33').innerText
+              });
+              S.appendOperationLog({
+                path: '/log/0/1/9',
+                val: ~~gebi('ten03').innerText
+              });
             }
-        }
-        ;
+            S.appendOperationLog({
+              path: '/log/0/1/1',
+              val: 0
+            });
+            S.appendOperationLog({
+              path: '/log/0/1/2',
+              val: 0
+            });
+            S.appendOperationLog({
+              path: '/log/0/1/4',
+              val: 0
+            });
+            S.appendOperationLog({
+              path: '/log/0/1/5',
+              val: 0
+            });
+            S.appendOperationLog({
+              path: '/log/0/1/7',
+              val: 0
+            });
+            S.appendOperationLog({
+              path: '/log/0/1/8',
+              val: 0
+            });
+            S.appendOperationLog({
+              path: '/log/0/1/10',
+              val: 0
+            });
+            S.appendOperationLog({
+              path: '/log/0/1/11',
+              val: 0
+            });
+          }
+        };
         H.log && H.log.match(/^\d{8,10}gm\-([0-9a-f]{4})\-\d{4,5}\-x?[0-9a-f]{8,16}$/) && parseInt(RegExp.$1, 16) & 16 && (F = !0)
         // TODO: end
     };
