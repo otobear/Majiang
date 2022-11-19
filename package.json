@@ -34,7 +34,7 @@
     "pug-cli": "^1.0.0-alpha6",
     "stylus": "^0.54.7",
     "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
