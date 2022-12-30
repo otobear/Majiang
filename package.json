@@ -30,7 +30,7 @@
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "istanbul": "^0.4.5",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "pug-cli": "^1.0.0-alpha6",
     "stylus": "^0.54.7",
     "webpack": "^4.40.2",
